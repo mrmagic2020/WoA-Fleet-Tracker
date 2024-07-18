@@ -21,7 +21,6 @@ import Col from "react-bootstrap/Col";
 import Spinner from "react-bootstrap/Spinner";
 import ListGroup from "react-bootstrap/ListGroup";
 import ProgressBar from "react-bootstrap/ProgressBar";
-import { List } from "react-bootstrap/lib/Media";
 
 const AircraftDetails: React.FC = () => {
   const { id = "" } = useParams<{ id: string }>();
@@ -80,7 +79,15 @@ const AircraftDetails: React.FC = () => {
     newContract.contractType = "";
     newContract.player = "";
     newContract.destination = "";
-    if (!updatedAircraft) return;
+    if (typeof updatedAircraft === "number") {
+        const errCode = updatedAircraft;
+        switch (errCode) {
+            default:
+                alert(`Failed to create contract: Unknown error (${errCode})`);
+                break;
+        }
+        return;
+    };
     setAircraft(updatedAircraft);
     checkForActiveContract(updatedAircraft.contracts);
   };

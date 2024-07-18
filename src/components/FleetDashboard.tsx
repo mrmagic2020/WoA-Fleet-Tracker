@@ -65,9 +65,17 @@ const FleetDashboard: React.FC = () => {
   };
 
   const handleCreateAircraft = async () => {
-    await createAircraft(newAircraft);
-    const data = await getAircraft();
-    setAircraft(data);
+    try {
+      await createAircraft(newAircraft);
+      const data = await getAircraft();
+      setAircraft(data);
+    } catch (error: any) {
+      if (error.message === "Aircraft already exists") {
+        alert("Failed to create aircraft: Aircraft already exists");
+      } else {
+        alert(`Failed to create aircraft: ${error.message}`);
+      }
+    }
   };
 
   const handleDeleteAircraft = async (id: string) => {
@@ -84,7 +92,7 @@ const FleetDashboard: React.FC = () => {
           Logout
         </Button>
       </div>
-      <br/>
+      <br />
       <Table striped hover>
         <thead>
           <tr>

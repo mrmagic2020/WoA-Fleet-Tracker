@@ -36,6 +36,12 @@ router.post("/", async (req: Request, res: Response) => {
   });
 
   try {
+    const existingAircraft = await Aircraft.findOne({
+      registration: aircraft.registration
+    });
+    if (existingAircraft) {
+      return res.status(400).json({ message: "Registration code already exists" });
+    }
     const newAircraft = await aircraft.save();
     res.status(201).json(newAircraft);
   } catch (err: any) {

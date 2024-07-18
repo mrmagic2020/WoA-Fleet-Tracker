@@ -16,7 +16,7 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       localStorage.removeItem("token");
       // Redirect to login page
-      window.location.href = "/login"; // Or use a more React-friendly method if needed
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }
@@ -41,4 +41,4 @@ export const logout = () => {
   localStorage.removeItem("token");
 };
 
-export default api; // Export the configured Axios instance
+export default api;

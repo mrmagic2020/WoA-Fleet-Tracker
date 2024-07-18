@@ -12,11 +12,19 @@ export const getAircraftById = async (id: string) => {
 };
 
 export const createAircraft = async (aircraft: any) => {
-  const response = await api.post("/aircraft", aircraft);
-  if (response.status === 201) {
-    return response.data as IAircraft;
+  try {
+    const response = await api.post("/aircraft", aircraft);
+    if (response.status === 201) {
+      return response.data as IAircraft;
+    }
+    throw new Error(`Unexpected response status: ${response.status}`);
+  } catch (error: any) {
+    // Check if the error response exists and contains a message
+    if (error.response) {
+      throw new Error(error.response.data.message || error.message);
+    }
+    throw error;
   }
-  return null;
 };
 
 export const deleteAircraft = async (id: string) => {
@@ -32,15 +40,18 @@ export const createContract = async (aircraftId: string, contract: any) => {
   if (response.status === 201) {
     return response.data as IAircraft;
   }
-  return null;
+  return response.status;
 };
 
-export const deleteContract = async (aircraftId: string, contractId: string) => {
+export const deleteContract = async (
+  aircraftId: string,
+  contractId: string
+) => {
   const response = await api.delete(
     `/aircraft/${aircraftId}/contracts/${contractId}`
   );
   return response.data as IAircraft;
-}
+};
 
 export const logProfit = async (
   aircraftId: string,
