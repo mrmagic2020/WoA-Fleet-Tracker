@@ -96,6 +96,7 @@ const AircraftDetails: React.FC = () => {
   const handleLogProfit = async (contractId: string) => {
     if (!aircraft) return;
     const updatedAircraft = await logProfit(id, contractId, newProfit);
+    setNewProfit(NaN);
     setAircraft(updatedAircraft);
     if (updatedAircraft) {
       checkForActiveContract(updatedAircraft.contracts);
