@@ -9,6 +9,7 @@ import {
 } from "../services/AircraftService";
 import { AirportCode, ContractType } from "@mrmagic2020/shared/dist/enums";
 import { IAircraft, IAircraftContract } from "@mrmagic2020/shared/dist/interfaces";
+import Breadcrumb from "react-bootstrap/Breadcrumb";
 import Container from "react-bootstrap/Container";
 import Alert from "react-bootstrap/Alert";
 import Badge from "react-bootstrap/Badge";
@@ -127,6 +128,10 @@ const AircraftDetails: React.FC = () => {
 
   return (
     <Container fluid>
+      <Breadcrumb>
+        <Breadcrumb.Item href="/">Fleet Dashboard</Breadcrumb.Item>
+        <Breadcrumb.Item active>{aircraft.ac_model} {aircraft.registration}</Breadcrumb.Item>
+      </Breadcrumb>
       <h1>Aircraft Details</h1>
       <Col xs={3}>
         <ListGroup>
