@@ -9,7 +9,7 @@
     "preinstall": "node setup-npmrc.js",
     "postinstall": "npm install --prefix backend && npm install --prefix shared",
     "start": "node backend/dist/index.js",
-    "heroku-postbuild": "npm run build && npm run heroku-postbuild --prefix backend"
+    "heroku-postbuild": "npm run build && npm run build --prefix backend"
   },
   "keywords": [],
   "author": "mrmagic2020",
