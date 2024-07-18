@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../services/AuthService";
 import { useAuth } from "../contexts/AuthContext";
+import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Button from "react-bootstrap/Button";
@@ -27,37 +28,39 @@ const Login: React.FC = () => {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <h2>Login</h2>
-      <br/>
-      <Col xs={3}>
-        <FloatingLabel controlId="floatingInput" label="Username">
-          <Form.Control
-            type="username"
-            value={username}
-            placeholder="Username"
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </FloatingLabel>
-        <br/>
-        <FloatingLabel controlId="floatingPassword" label="Password">
-          <Form.Control
-            type="password"
-            value={password}
-            placeholder="Password"
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </FloatingLabel>
-      </Col>
-      <br/>
-      <Link to="/register">Register</Link>
-      <br />
-      <Button variant="outline-primary" type="submit">
-        Login
-      </Button>
-    </Form>
+    <Container fluid>
+      <Form onSubmit={handleSubmit}>
+        <h2>Login</h2>
+        <br />
+        <Col xs={3}>
+          <FloatingLabel controlId="floatingInput" label="Username">
+            <Form.Control
+              type="username"
+              value={username}
+              placeholder="Username"
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </FloatingLabel>
+          <br />
+          <FloatingLabel controlId="floatingPassword" label="Password">
+            <Form.Control
+              type="password"
+              value={password}
+              placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </FloatingLabel>
+        </Col>
+        <br />
+        <Link to="/register">Register</Link>
+        <br />
+        <Button variant="outline-primary" type="submit">
+          Login
+        </Button>
+      </Form>
+    </Container>
   );
 };
 
