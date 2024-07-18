@@ -2,17 +2,20 @@ import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
-import FleetDashboard from "./components/FleetDashboard";
+const FleetDashboard = lazy(() => import("./components/FleetDashboard"));
 const AircraftDetails = lazy(() => import("./components/AircraftDetails"));
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Admin from "./components/Admin";
+import Container from "react-bootstrap/Container";
+import CustomNavbar from "./components/CustomNavbar";
 
 const App: React.FC = () => {
   return (
     <AuthProvider>
       <Router>
-        <Suspense fallback={<div>Loading...</div>}>
+        <CustomNavbar />
+        <Suspense fallback={<Container>Loading...</Container>}>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

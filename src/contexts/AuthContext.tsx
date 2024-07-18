@@ -14,7 +14,7 @@ import { UserRole } from "@mrmagic2020/shared/dist/enums";
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  name: string;
+  username: string;
   role: UserRole;
   login: () => void;
   logout: () => void;
@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, name, role, login, logout }}
+      value={{ isAuthenticated, username: name, role, login, logout }}
     >
       {children}
     </AuthContext.Provider>

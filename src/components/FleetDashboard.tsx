@@ -17,7 +17,7 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 
 const FleetDashboard: React.FC = () => {
-  const { role, logout } = useAuth();
+  const { username, role, logout } = useAuth();
   const [sortBy, setSortBy] = useState(SortBy.None);
   const [aircraft, setAircraft] = useState<any[]>([]);
   const [newAircraft, setNewAircraft] = useState({
@@ -99,18 +99,6 @@ const FleetDashboard: React.FC = () => {
   return (
     <Container fluid>
       <h1 className="text-center">Fleet Dashboard</h1>
-      <div className="text-center">
-        {role === UserRole.Admin && (
-          <Link to="/admin">
-            <Button variant="outline-danger" size="sm">
-              Admin
-            </Button>
-          </Link>
-        )}
-        <Button variant="outline-primary" size="sm" onClick={logout}>
-          Logout
-        </Button>
-      </div>
       <br />
       <Form>
         <Row>
