@@ -155,6 +155,7 @@ const FleetDashboard: React.FC = () => {
                 <Button
                   variant="outline-danger"
                   size="sm"
+                  className="ms-2"
                   onClick={() => handleDeleteAircraft(aircraft._id)}
                 >
                   Delete
