@@ -1,7 +1,10 @@
 {
-  "name": "shared",
-  "version": "1.0.0",
+  "name": "@mrmagic2020/shared",
+  "version": "1.0.1",
   "main": "index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc"
   },
@@ -11,5 +14,12 @@
   "description": "",
   "devDependencies": {
     "typescript": "^5.5.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrmagic2020/WoA-Fleet-Tracker.git"
+  },
+  "publishConfig": {
+    "@mrmagic2020:registry": "https://npm.pkg.github.com/"
   }
 }

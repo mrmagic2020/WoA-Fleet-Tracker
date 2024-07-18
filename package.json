@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack serve --mode development",
-    "build": "webpack --mode production && cp -r dist ./backend/client"
+    "build": "webpack --mode production && cp -r dist ./backend/client",
+    "postinstall": "echo '@mrmagic2020:registry=https://npm.pkg.github.com/' >> .npmrc && echo '//npm.pkg.github.com/:_authToken=${NPM_AUTH_TOKEN}' >> .npmrc && npm install"
   },
   "keywords": [],
   "author": "mrmagic2020",
@@ -28,12 +29,12 @@
     "webpack-dev-server": "^5.0.4"
   },
   "dependencies": {
+    "@mrmagic2020/shared": "^1.0.1",
     "@popperjs/core": "^2.11.8",
     "@types/react-bootstrap": "^0.32.37",
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
     "react-bootstrap": "^2.10.4",
-    "react-router-dom": "^6.25.0",
-    "shared": "file:../shared"
+    "react-router-dom": "^6.25.0"
   }
 }

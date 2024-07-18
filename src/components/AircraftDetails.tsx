@@ -7,8 +7,8 @@ import {
   finishContract,
   deleteContract
 } from "../services/AircraftService";
-import { AirportCode, ContractType } from "shared/src/enums";
-import { IAircraft, IAircraftContract } from "shared/src/interfaces";
+import { AirportCode, ContractType } from "@mrmagic2020/shared/dist/enums";
+import { IAircraft, IAircraftContract } from "@mrmagic2020/shared/dist/interfaces";
 import Container from "react-bootstrap/Container";
 import Alert from "react-bootstrap/Alert";
 import Badge from "react-bootstrap/Badge";

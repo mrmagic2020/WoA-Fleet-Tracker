@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { AircraftSize, AircraftStatus, AircraftType, AirportCode, ContractType } from "shared/src/enums";
-import { IAircraftConfiguration, IAircraftContract } from "shared/src/interfaces";
+import { AircraftSize, AircraftStatus, AircraftType, AirportCode, ContractType } from "@mrmagic2020/shared/dist/enums";
+import { IAircraftConfiguration, IAircraftContract } from "@mrmagic2020/shared/dist/interfaces";
 
 export interface IAircraft extends Document {
   user: mongoose.Types.ObjectId;

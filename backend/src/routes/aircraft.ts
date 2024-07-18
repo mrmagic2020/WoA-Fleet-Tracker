@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import { auth } from "./auth";
 import Aircraft from "../models/aircraft";
-import { AircraftStatus, ContractType } from "shared/src/enums";
+import { AircraftStatus, ContractType } from "@mrmagic2020/shared/dist/enums";
 
 const router = express.Router();
 router.use(auth);

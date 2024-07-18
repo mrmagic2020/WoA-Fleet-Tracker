@@ -1,5 +1,5 @@
 import api from "./api";
-import { IAircraft } from "shared/src/interfaces";
+import { IAircraft } from "@mrmagic2020/shared/dist/interfaces";
 
 export const getAircraft = async () => {
   const response = await api.get("/aircraft");

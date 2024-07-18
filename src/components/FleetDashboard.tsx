@@ -6,7 +6,7 @@ import {
   deleteAircraft
 } from "../services/AircraftService";
 import { aircraftTypes, IJSONAircraftType } from "../AircraftData";
-import { AirportCode } from "shared/src/enums";
+import { AirportCode } from "@mrmagic2020/shared/dist/enums";
 import { useAuth } from "../contexts/AuthContext";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
