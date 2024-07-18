@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
-    "build": "npm install && tsc"
+    "build": "tsc",
+    "hero-postbuild": "npm run build"
   },
   "keywords": [],
   "author": "mrmagic2020",
