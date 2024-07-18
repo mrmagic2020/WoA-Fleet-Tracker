@@ -1,1 +1,1 @@
-web: cd backend && npm run start
+web: npm run build && serve -s dist && cd backend && npm run start
