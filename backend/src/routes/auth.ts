@@ -2,19 +2,14 @@ import express, { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import User from "../models/user";
-import { auth } from "../middleware/auth";
+import { auth, checkUniqueUsername } from "../middleware/auth";
 
 const router = express.Router();
 
 // Register a new user
-router.post("/register", async (req, res) => {
+router.post("/register", checkUniqueUsername, async (req, res) => {
   const { username, password, role } = req.body;
   try {
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
-    }
-
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ username, password: hashedPassword, role });
     const newUser = await user.save();
@@ -50,6 +45,21 @@ router.get("/me", auth, async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    res.json(user);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// PUT update current user's username
+router.put("/me/username", auth, checkUniqueUsername, async (req: Request, res: Response) => {
+  try {
+    const user = await User.findById((req.user as any).id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    user.username = req.body.username;
+    await user.save();
     res.json(user);
   } catch (err: any) {
     res.status(500).json({ message: err.message });

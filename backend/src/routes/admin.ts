@@ -7,7 +7,7 @@ const router = Router();
 
 router.use(auth);
 
-// Get all users (protected route)
+// GET all users (protected route)
 router.get("/users", checkAdmin, async (req: Request, res: Response) => {
   try {
     const users = await User.find({});
@@ -17,6 +17,7 @@ router.get("/users", checkAdmin, async (req: Request, res: Response) => {
   }
 });
 
+// GET current user's information
 router.get("/me", auth, async (req: Request, res: Response) => {
   try {
     const user = await User.findById((req.user as any).id);

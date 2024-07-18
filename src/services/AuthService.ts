@@ -48,4 +48,9 @@ export const getCurrentUser = async () => {
   return response.data;
 }
 
+export const updateUsername = async (username: string) => {
+  const response = await api.put("/auth/me/username", { username });
+  return response.data;
+}
+
 export default api;
