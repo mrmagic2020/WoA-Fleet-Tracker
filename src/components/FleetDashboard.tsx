@@ -7,8 +7,7 @@ import {
   SortBy
 } from "../services/AircraftService";
 import { aircraftTypes } from "../AircraftData";
-import { AirportCode, UserRole } from "@mrmagic2020/shared/dist/enums";
-import { useAuth } from "../contexts/AuthContext";
+import { AirportCode } from "@mrmagic2020/shared/dist/enums";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
@@ -17,7 +16,6 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 
 const FleetDashboard: React.FC = () => {
-  const { username, role, logout } = useAuth();
   const [sortBy, setSortBy] = useState(SortBy.None);
   const [aircraft, setAircraft] = useState<any[]>([]);
   const [newAircraft, setNewAircraft] = useState({

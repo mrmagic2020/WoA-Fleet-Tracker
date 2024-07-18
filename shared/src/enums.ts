@@ -7,7 +7,7 @@ export enum AircraftSize {
 
 export enum AircraftType {
   PAX = "PAX",
-  CARGO = "CARGO"
+  CARGO = "Cargo"
 }
 
 export enum AircraftStatus {

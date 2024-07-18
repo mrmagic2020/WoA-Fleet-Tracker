@@ -6,7 +6,7 @@ export interface IAircraft extends Document {
   user: mongoose.Types.ObjectId;
   ac_model: string;
   size: AircraftSize;
-  type: string;
+  type: AircraftType;
   registration: string;
   configuration: IAircraftConfiguration;
   airport: AirportCode;
