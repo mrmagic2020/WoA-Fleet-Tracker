@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import {
   getAircraft,
   createAircraft,
-  deleteAircraft
+  deleteAircraft,
+  SortBy
 } from "../services/AircraftService";
-import { aircraftTypes, IJSONAircraftType } from "../AircraftData";
+import { aircraftTypes } from "../AircraftData";
 import { AirportCode } from "@mrmagic2020/shared/dist/enums";
 import { useAuth } from "../contexts/AuthContext";
 import Container from "react-bootstrap/Container";
@@ -17,6 +18,7 @@ import Row from "react-bootstrap/Row";
 
 const FleetDashboard: React.FC = () => {
   const { logout } = useAuth();
+  const [sortBy, setSortBy] = useState(SortBy.None);
   const [aircraft, setAircraft] = useState<any[]>([]);
   const [newAircraft, setNewAircraft] = useState({
     ac_model: "",
@@ -31,14 +33,24 @@ const FleetDashboard: React.FC = () => {
 
   useEffect(() => {
     const fetchAircraft = async () => {
-      const data = await getAircraft();
+      const data = await getAircraft(sortBy);
       setAircraft(data);
     };
 
     fetchAircraft();
   }, []);
 
-  const handleInputChange = (
+  const handleSortByChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortBy(e.target.value as SortBy);
+    const fetchAircraft = async () => {
+      const data = await getAircraft(e.target.value as SortBy);
+      setAircraft(data);
+    };
+
+    fetchAircraft();
+  };
+
+  const handleAircraftInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
@@ -93,6 +105,27 @@ const FleetDashboard: React.FC = () => {
         </Button>
       </div>
       <br />
+      <Form>
+        <Row>
+          <Col xs="auto">
+            <Form.Label>Sort by</Form.Label>
+          </Col>
+          <Col xs="auto">
+            <Form.Select
+              size="sm"
+              name="sortBy"
+              value={sortBy}
+              onChange={handleSortByChange}
+            >
+              {Object.values(SortBy).map((sort) => (
+                <option key={sort} value={sort}>
+                  {sort}
+                </option>
+              ))}
+            </Form.Select>
+          </Col>
+        </Row>
+      </Form>
       <Table striped hover>
         <thead>
           <tr>
@@ -172,7 +205,7 @@ const FleetDashboard: React.FC = () => {
               type="text"
               name="registration"
               value={newAircraft.registration}
-              onChange={handleInputChange}
+              onChange={handleAircraftInputChange}
               placeholder="Registration"
               required
             />
@@ -181,7 +214,7 @@ const FleetDashboard: React.FC = () => {
             <Form.Select
               name="airport"
               value={newAircraft.airport}
-              onChange={handleInputChange}
+              onChange={handleAircraftInputChange}
               required
             >
               <option value="" disabled>

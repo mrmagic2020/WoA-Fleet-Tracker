@@ -1,8 +1,47 @@
 import api from "./api";
 import { IAircraft } from "@mrmagic2020/shared/dist/interfaces";
 
-export const getAircraft = async () => {
+export enum SortBy {
+  None = "none",
+  Registration = "registration",
+  Status = "status",
+  Airport = "airport",
+  Type = "type",
+  Size = "size"
+}
+
+export const getAircraft = async (sortBy: SortBy = SortBy.None) => {
   const response = await api.get("/aircraft");
+  switch (sortBy) {
+    case SortBy.Registration:
+      response.data.sort((a: IAircraft, b: IAircraft) =>
+        a.registration.localeCompare(b.registration)
+      );
+      break;
+    case SortBy.Status:
+      response.data.sort((a: IAircraft, b: IAircraft) =>
+        a.status.localeCompare(b.status)
+      );
+      break;
+    case SortBy.Airport:
+      response.data.sort((a: IAircraft, b: IAircraft) =>
+        a.airport.localeCompare(b.airport)
+      );
+      break;
+    case SortBy.Type:
+      response.data.sort((a: IAircraft, b: IAircraft) =>
+        a.type.localeCompare(b.type)
+      );
+      break;
+    case SortBy.Size:
+      response.data.sort((a: IAircraft, b: IAircraft) => {
+        const sizeOrder = ["S", "M", "L", "X"];
+        return sizeOrder.indexOf(a.size) - sizeOrder.indexOf(b.size);
+      });
+      break;
+    default:
+      break;
+  }
   return response.data as IAircraft[];
 };
 
