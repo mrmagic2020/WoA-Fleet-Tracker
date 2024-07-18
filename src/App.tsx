@@ -6,6 +6,7 @@ import FleetDashboard from "./components/FleetDashboard";
 const AircraftDetails = lazy(() => import("./components/AircraftDetails"));
 import Login from "./components/Login";
 import Register from "./components/Register";
+import Admin from "./components/Admin";
 
 const App: React.FC = () => {
   return (
@@ -18,6 +19,7 @@ const App: React.FC = () => {
             <Route path="/" element={<PrivateRoute />}>
               <Route path="/" element={<FleetDashboard />} />
               <Route path="/aircraft/:id" element={<AircraftDetails />} />
+              <Route path="/admin" element={<Admin />} />
             </Route>
           </Routes>
         </Suspense>

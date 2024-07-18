@@ -7,7 +7,7 @@ import {
   SortBy
 } from "../services/AircraftService";
 import { aircraftTypes } from "../AircraftData";
-import { AirportCode } from "@mrmagic2020/shared/dist/enums";
+import { AirportCode, UserRole } from "@mrmagic2020/shared/dist/enums";
 import { useAuth } from "../contexts/AuthContext";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
@@ -17,7 +17,7 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 
 const FleetDashboard: React.FC = () => {
-  const { logout } = useAuth();
+  const { role, logout } = useAuth();
   const [sortBy, setSortBy] = useState(SortBy.None);
   const [aircraft, setAircraft] = useState<any[]>([]);
   const [newAircraft, setNewAircraft] = useState({
@@ -100,6 +100,13 @@ const FleetDashboard: React.FC = () => {
     <Container fluid>
       <h1 className="text-center">Fleet Dashboard</h1>
       <div className="text-center">
+        {role === UserRole.Admin && (
+          <Link to="/admin">
+            <Button variant="outline-danger" size="sm">
+              Admin
+            </Button>
+          </Link>
+        )}
         <Button variant="outline-primary" size="sm" onClick={logout}>
           Logout
         </Button>

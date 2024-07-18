@@ -1,3 +1,4 @@
+import { UserRole } from "@mrmagic2020/shared/dist/enums";
 import api from "./api";
 
 // Request interceptor to add the token to headers
@@ -23,7 +24,8 @@ api.interceptors.response.use(
 );
 
 export const register = async (username: string, password: string) => {
-  const response = await api.post("/auth/register", { username, password });
+  const response = await api.post("/auth/register", { username, password, role: UserRole.User });
+  console.log(response);
   return response.data;
 };
 
@@ -40,5 +42,10 @@ export const getToken = () => {
 export const logout = () => {
   localStorage.removeItem("token");
 };
+
+export const getCurrentUser = async () => {
+  const response = await api.get("/auth/me");
+  return response.data;
+}
 
 export default api;

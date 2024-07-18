@@ -34,3 +34,8 @@ export enum ContractType {
   Random = "Random",
   Computer = "Computer"
 }
+
+export enum UserRole {
+  Admin = "Admin",
+  User = "User"
+}

@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
-import { auth } from "./auth";
+import { auth } from "../middleware/auth";
 import Aircraft from "../models/aircraft";
 import { AircraftStatus, ContractType } from "@mrmagic2020/shared/dist/enums";
 

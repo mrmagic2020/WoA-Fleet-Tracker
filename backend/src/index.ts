@@ -4,7 +4,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import aircraftRoutes from "./routes/aircraft";
-import authRoutes, { auth } from './routes/auth';
+import authRoutes from "./routes/auth";
+import adminRoutes from "./routes/admin";
+import { auth } from "./middleware/auth";
 
 dotenv.config();
 
@@ -22,8 +24,9 @@ mongoose
   .catch((err) => console.log("MongoDB connection error:", err));
 
 // Use routes
-app.use('/api/auth', authRoutes);
-app.use('/api/aircraft', auth, aircraftRoutes); // Protect aircraft routes
+app.use("/api/auth", authRoutes);
+app.use("/api/aircraft", auth, aircraftRoutes); // Protect aircraft routes
+app.use("/api/admin", auth, adminRoutes);
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "client/dist")));

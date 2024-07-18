@@ -2,20 +2,21 @@ import express, { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import User from "../models/user";
+import { auth } from "../middleware/auth";
 
 const router = express.Router();
 
 // Register a new user
 router.post("/register", async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, role } = req.body;
   try {
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
-    
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ username, password: hashedPassword });
+    const user = new User({ username, password: hashedPassword, role });
     const newUser = await user.save();
     res.status(201).json(newUser);
   } catch (err: any) {
@@ -42,32 +43,17 @@ router.post("/login", async (req, res) => {
   res.json({ token });
 });
 
-// Middleware to authenticate user
-export const auth = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.header("Authorization");
-  if (!authHeader) {
-    return res.status(401).json({ message: "No token, authorization denied" });
-  }
-
-  const token = authHeader.split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ message: "No token, authorization denied" });
-  }
-
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    return res
-      .status(500)
-      .json({ message: "Internal server error: JWT secret not set" });
-  }
-
+// GET current user's information
+router.get("/me", auth, async (req: Request, res: Response) => {
   try {
-    const decoded = jwt.verify(token, secret) as JwtPayload;
-    req.user = decoded;
-    next();
-  } catch (err) {
-    res.status(401).json({ message: "Token is not valid" });
+    const user = await User.findById((req.user as any).id).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
   }
-};
+});
 
 export default router;
