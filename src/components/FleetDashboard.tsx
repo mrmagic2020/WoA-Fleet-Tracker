@@ -4,13 +4,16 @@ import {
   getAircraft,
   createAircraft,
   deleteAircraft,
-  SortBy
+  SortBy,
+  SortMode
 } from "../services/AircraftService";
 import { aircraftTypes } from "../AircraftData";
 import { AircraftStatus, AirportCode } from "@mrmagic2020/shared/dist/enums";
 import { IAircraft } from "@mrmagic2020/shared/dist/interfaces";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import ToggleButton from "react-bootstrap/ToggleButton";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
@@ -21,6 +24,12 @@ import Modal from "react-bootstrap/Modal";
 
 const FleetDashboard: React.FC = () => {
   const [sortBy, setSortBy] = useState(SortBy.None);
+  const [sortMode, setSortMode] = useState(SortMode.Ascending);
+  const sortModeRadios = [
+    { name: "Ascending", value: SortMode.Ascending },
+    { name: "Descending", value: SortMode.Descending }
+  ];
+
   const [aircraft, setAircraft] = useState<IAircraft[]>([]);
   const [newAircraft, setNewAircraft] = useState({
     ac_model: "",
@@ -33,6 +42,7 @@ const FleetDashboard: React.FC = () => {
     totalProfits: 0,
     contracts: []
   });
+
   const [isCreateLoading, setIsCreateLoading] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState<{
     [key: string]: boolean;
@@ -42,7 +52,7 @@ const FleetDashboard: React.FC = () => {
 
   useEffect(() => {
     const fetchAircraft = async () => {
-      const data = await getAircraft(sortBy);
+      const data = await getAircraft(sortBy, sortMode);
       setAircraft(data);
     };
 
@@ -52,7 +62,17 @@ const FleetDashboard: React.FC = () => {
   const handleSortByChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value as SortBy);
     const fetchAircraft = async () => {
-      const data = await getAircraft(e.target.value as SortBy);
+      const data = await getAircraft(e.target.value as SortBy, sortMode);
+      setAircraft(data);
+    };
+
+    fetchAircraft();
+  };
+
+  const handleSortModeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSortMode(parseInt(e.target.value));
+    const fetchAircraft = async () => {
+      const data = await getAircraft(sortBy, parseInt(e.target.value));
       setAircraft(data);
     };
 
@@ -134,9 +154,7 @@ const FleetDashboard: React.FC = () => {
       <Form>
         <Row>
           <Col xs="auto">
-            <Form.Label
-              htmlFor="sortBy"
-            >Sort by</Form.Label>
+            <Form.Label htmlFor="sortBy">Sort by</Form.Label>
           </Col>
           <Col xs="auto">
             <Form.Select
@@ -151,6 +169,25 @@ const FleetDashboard: React.FC = () => {
                 </option>
               ))}
             </Form.Select>
+          </Col>
+          <Col xs="auto">
+            <ButtonGroup>
+              {sortModeRadios.map((radio) => (
+                <ToggleButton
+                  key={radio.value}
+                  id={`sortMode-${radio.value}`}
+                  type="radio"
+                  variant="outline-secondary"
+                  size="sm"
+                  name="sortMode"
+                  value={radio.value}
+                  checked={sortMode === radio.value}
+                  onChange={handleSortModeChange}
+                >
+                  {radio.name}
+                </ToggleButton>
+              ))}
+            </ButtonGroup>
           </Col>
         </Row>
       </Form>

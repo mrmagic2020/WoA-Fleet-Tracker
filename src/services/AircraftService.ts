@@ -11,39 +11,65 @@ export enum SortBy {
   TotalProfits = "total profits"
 }
 
-export const getAircraft = async (sortBy: SortBy = SortBy.None) => {
+export enum SortMode {
+  Ascending,
+  Descending
+}
+
+export const getAircraft = async (
+  sortBy: SortBy = SortBy.None,
+  sortMode: SortMode = SortMode.Ascending
+) => {
   const response = await api.get("/aircraft");
   switch (sortBy) {
     case SortBy.Registration:
-      response.data.sort((a: IAircraft, b: IAircraft) =>
-        a.registration.localeCompare(b.registration)
-      );
+      response.data.sort((a: IAircraft, b: IAircraft) => {
+        if (sortMode === SortMode.Ascending) {
+          return a.registration.localeCompare(b.registration);
+        }
+        return b.registration.localeCompare(a.registration);
+      });
       break;
     case SortBy.Status:
-      response.data.sort((a: IAircraft, b: IAircraft) =>
-        a.status.localeCompare(b.status)
-      );
+      response.data.sort((a: IAircraft, b: IAircraft) => {
+        if (sortMode === SortMode.Ascending) {
+          return a.status.localeCompare(b.status);
+        }
+        return b.status.localeCompare(a.status);
+      });
       break;
     case SortBy.Airport:
-      response.data.sort((a: IAircraft, b: IAircraft) =>
-        a.airport.localeCompare(b.airport)
-      );
+      response.data.sort((a: IAircraft, b: IAircraft) => {
+        if (sortMode === SortMode.Ascending) {
+          return a.airport.localeCompare(b.airport);
+        }
+        return b.airport.localeCompare(a.airport);
+      });
       break;
     case SortBy.Type:
-      response.data.sort((a: IAircraft, b: IAircraft) =>
-        a.type.localeCompare(b.type)
-      );
+      response.data.sort((a: IAircraft, b: IAircraft) => {
+        if (sortMode === SortMode.Ascending) {
+          return a.type.localeCompare(b.type);
+        }
+        return b.type.localeCompare(a.type);
+      });
       break;
     case SortBy.Size:
       response.data.sort((a: IAircraft, b: IAircraft) => {
         const sizeOrder = ["S", "M", "L", "X"];
-        return sizeOrder.indexOf(a.size) - sizeOrder.indexOf(b.size);
+        if (sortMode === SortMode.Ascending) {
+          return sizeOrder.indexOf(a.size) - sizeOrder.indexOf(b.size);
+        }
+        return sizeOrder.indexOf(b.size) - sizeOrder.indexOf(a.size);
       });
       break;
     case SortBy.TotalProfits:
-      response.data.sort(
-        (a: IAircraft, b: IAircraft) => a.totalProfits - b.totalProfits
-      );
+      response.data.sort((a: IAircraft, b: IAircraft) => {
+        if (sortMode === SortMode.Ascending) {
+          return a.totalProfits - b.totalProfits;
+        }
+        return b.totalProfits - a.totalProfits;
+      });
       break;
     default:
       break;
