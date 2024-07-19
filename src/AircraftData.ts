@@ -8,4 +8,4 @@ export interface IJSONAircraftType {
 
 export const aircraftTypes: IJSONAircraftType[] = aircraftData.filter(
   (aircraft: IJSONAircraftType) => aircraft.Aircraft !== "Aircraft"
-);
+).sort((a: IJSONAircraftType, b: IJSONAircraftType) => a.Aircraft.localeCompare(b.Aircraft));
