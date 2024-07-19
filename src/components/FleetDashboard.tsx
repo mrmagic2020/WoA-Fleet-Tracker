@@ -7,17 +7,19 @@ import {
   SortBy
 } from "../services/AircraftService";
 import { aircraftTypes } from "../AircraftData";
-import { AirportCode } from "@mrmagic2020/shared/dist/enums";
+import { AircraftStatus, AirportCode } from "@mrmagic2020/shared/dist/enums";
+import { IAircraft } from "@mrmagic2020/shared/dist/interfaces";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
+import Badge from "react-bootstrap/Badge";
 
 const FleetDashboard: React.FC = () => {
   const [sortBy, setSortBy] = useState(SortBy.None);
-  const [aircraft, setAircraft] = useState<any[]>([]);
+  const [aircraft, setAircraft] = useState<IAircraft[]>([]);
   const [newAircraft, setNewAircraft] = useState({
     ac_model: "",
     size: "",
@@ -143,7 +145,21 @@ const FleetDashboard: React.FC = () => {
               <td>
                 {aircraft.contracts[aircraft.contracts.length - 1]?.destination}
               </td>
-              <td>{aircraft.status}</td>
+              {aircraft.status === AircraftStatus.InService && (
+                <td>
+                  <Badge bg="success">{aircraft.status}</Badge>
+                </td>
+              )}
+              {aircraft.status === AircraftStatus.ContractPending && (
+                <td>
+                  <Badge bg="warning">{aircraft.status}</Badge>
+                </td>
+              )}
+              {aircraft.status === AircraftStatus.Idle && (
+                <td>
+                  <Badge bg="danger">{aircraft.status}</Badge>
+                </td>
+              )}
               <td>
                 <Link to={`/aircraft/${aircraft._id}`}>
                   <Button variant="outline-info" size="sm">

@@ -32,7 +32,7 @@
     "webpack-dev-server": "^5.0.4"
   },
   "dependencies": {
-    "@mrmagic2020/shared": "^1.0.4",
+    "@mrmagic2020/shared": "^1.0.5",
     "@popperjs/core": "^2.11.8",
     "@types/react-bootstrap": "^0.32.37",
     "axios": "^1.7.2",
