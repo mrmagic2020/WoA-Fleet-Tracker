@@ -17,6 +17,7 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Badge from "react-bootstrap/Badge";
 import Currency from "./Currency";
+import Modal from "react-bootstrap/Modal";
 
 const FleetDashboard: React.FC = () => {
   const [sortBy, setSortBy] = useState(SortBy.None);
@@ -36,6 +37,8 @@ const FleetDashboard: React.FC = () => {
   const [isDeleteLoading, setIsDeleteLoading] = useState<{
     [key: string]: boolean;
   }>({});
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedAircraftId, setSelectedAircraftId] = useState("");
 
   useEffect(() => {
     const fetchAircraft = async () => {
@@ -131,12 +134,14 @@ const FleetDashboard: React.FC = () => {
       <Form>
         <Row>
           <Col xs="auto">
-            <Form.Label>Sort by</Form.Label>
+            <Form.Label
+              htmlFor="sortBy"
+            >Sort by</Form.Label>
           </Col>
           <Col xs="auto">
             <Form.Select
               size="sm"
-              name="sortBy"
+              id="sortBy"
               value={sortBy}
               onChange={handleSortByChange}
             >
@@ -202,15 +207,43 @@ const FleetDashboard: React.FC = () => {
                   variant="outline-danger"
                   size="sm"
                   className="ms-2"
-                  onClick={() => handleDeleteAircraft(aircraft._id)}
+                  onClick={() => {
+                    setSelectedAircraftId(aircraft._id);
+                    setShowDeleteModal(true);
+                  }}
                 >
-                  {isDeleteLoading[aircraft._id] ? "Deleting..." : "Delete"}
+                  Delete
                 </Button>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
+
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Aircraft</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this aircraft?</Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="outline-secondary"
+            onClick={() => setShowDeleteModal(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="outline-danger"
+            disabled={isDeleteLoading[selectedAircraftId]}
+            onClick={() => {
+              setShowDeleteModal(false);
+              handleDeleteAircraft(selectedAircraftId);
+            }}
+          >
+            {isDeleteLoading[selectedAircraftId] ? "Deleting..." : "Delete"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       <Form
         onSubmit={(e) => {
@@ -249,6 +282,7 @@ const FleetDashboard: React.FC = () => {
               value={newAircraft.registration}
               onChange={handleAircraftInputChange}
               placeholder="Registration"
+              autoComplete="off"
               required
             />
           </Col>
