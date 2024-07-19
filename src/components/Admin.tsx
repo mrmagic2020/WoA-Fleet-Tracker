@@ -117,8 +117,16 @@ const UserList: React.FC = () => {
               <td>{invitation.remainingUses}</td>
               <td>
                 <Button
+                  variant="outline-primary"
+                  size="sm"
+                  onClick={() => navigator.clipboard.writeText(invitation.code)}
+                >
+                  Copy
+                </Button>
+                <Button
                   variant="outline-danger"
                   size="sm"
+                  className="ms-2"
                   onClick={() => handleDeleteInvitation(invitation._id)}
                 >
                   Delete
