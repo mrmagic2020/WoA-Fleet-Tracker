@@ -8,12 +8,11 @@ import authRoutes from "./routes/auth";
 import adminRoutes from "./routes/admin";
 import invitationRoutes from "./routes/invitation";
 import { auth } from "./middleware/auth";
-import Aircraft from "./models/aircraft";
 
 dotenv.config();
 
 const app = express();
-const port = 6060; // Backend port
+const port = process.env.PORT || 6060; // Backend port
 
 app.use(cors());
 app.use(express.json());
