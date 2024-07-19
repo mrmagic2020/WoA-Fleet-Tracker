@@ -31,12 +31,12 @@ app.use("/api/admin", auth, adminRoutes);
 app.use("/api/invitation", auth, invitationRoutes);
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, "../client/dist")));
+app.use(express.static(path.join(__dirname, "../client")));
 
 // The "catchall" handler: for any request that doesn't match one above, send back index.html
 app.get("*", (req, res) => {
   console.log("catchall");
-  res.sendFile(path.join(__dirname, "/../client/dist/index.html"), (err) => {
+  res.sendFile(path.join(__dirname, "/../client/index.html"), (err) => {
     if (err) {
       res.status(500).send(err);
     }
