@@ -236,8 +236,8 @@ const FleetDashboard: React.FC = () => {
             variant="outline-danger"
             disabled={isDeleteLoading[selectedAircraftId]}
             onClick={() => {
-              setShowDeleteModal(false);
               handleDeleteAircraft(selectedAircraftId);
+              setShowDeleteModal(false);
             }}
           >
             {isDeleteLoading[selectedAircraftId] ? "Deleting..." : "Delete"}
