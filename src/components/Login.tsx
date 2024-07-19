@@ -18,8 +18,8 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(username, password);
-      loginContext();
+      const { user } = await login(username, password);
+      loginContext(user);
       navigate("/");
     } catch (err) {
       console.error("Failed to login", err);

@@ -16,7 +16,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   username: string;
   role: UserRole;
-  login: () => void;
+  login: (user: any) => void;
   logout: () => void;
 }
 
@@ -43,8 +43,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [isAuthenticated]);
 
-  const login = () => {
+  const login = (user: any) => {
     setIsAuthenticated(true);
+    setName(user.username);
+    setRole(user.role);
   };
 
   const logout = () => {

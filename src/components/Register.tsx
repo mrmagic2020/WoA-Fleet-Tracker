@@ -19,8 +19,13 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await register(username, password, invitationCode);
-      loginContext();
+      const { token, user } = await register(
+        username,
+        password,
+        invitationCode
+      );
+      localStorage.setItem("token", token);
+      loginContext(user);
       navigate("/");
     } catch (err: any) {
       console.error("Failed to register", err);

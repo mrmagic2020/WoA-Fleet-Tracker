@@ -26,12 +26,20 @@ router.post(
       // If invitation mode is enabled, decrement the remaining uses of the invitation code
       if (INVITATION_MODE) {
         const invitation = await Invitation.findOne({ code: invitationCode });
-        if (invitation) {
+        if (invitation && invitation.remainingUses > 0) {
           invitation.remainingUses -= 1;
           await invitation.save();
         }
       }
-      res.status(201).json(newUser);
+      // Automatically log in the user after registration
+      const token = jwt.sign(
+        { id: newUser._id, role: newUser.role },
+        process.env.JWT_SECRET ?? "defaultSecret",
+        {
+          expiresIn: "1h"
+        }
+      );
+      res.status(201).json({ token, user: newUser });
     } catch (err: any) {
       console.log(err);
       res.status(400).json({ message: err.message });
@@ -54,7 +62,7 @@ router.post("/login", async (req, res) => {
       expiresIn: "1h"
     }
   );
-  res.json({ token });
+  res.json({ token, user: { username: user.username, role: user.role } });
 });
 
 // GET current user's information
