@@ -32,6 +32,7 @@ const FleetDashboard: React.FC = () => {
     totalProfits: 0,
     contracts: []
   });
+  const [isCreateLoading, setIsCreateLoading] = useState(false);
 
   useEffect(() => {
     const fetchAircraft = async () => {
@@ -79,6 +80,7 @@ const FleetDashboard: React.FC = () => {
   };
 
   const handleCreateAircraft = async () => {
+    setIsCreateLoading(true);
     try {
       console.log(newAircraft);
       await createAircraft(newAircraft);
@@ -91,6 +93,7 @@ const FleetDashboard: React.FC = () => {
         alert(`Failed to create aircraft: ${error.message}`);
       }
     }
+    setIsCreateLoading(false);
   };
 
   const handleDeleteAircraft = async (id: string) => {
@@ -251,10 +254,11 @@ const FleetDashboard: React.FC = () => {
               disabled={
                 !newAircraft.ac_model ||
                 !newAircraft.registration ||
-                !newAircraft.airport
+                !newAircraft.airport ||
+                isCreateLoading
               }
             >
-              Create
+              {isCreateLoading ? "Creating..." : "Create"}
             </Button>
           </Col>
         </Row>
