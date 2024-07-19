@@ -8,7 +8,10 @@ import {
   deleteContract
 } from "../services/AircraftService";
 import { AirportCode, ContractType } from "@mrmagic2020/shared/dist/enums";
-import { IAircraft, IAircraftContract } from "@mrmagic2020/shared/dist/interfaces";
+import {
+  IAircraft,
+  IAircraftContract
+} from "@mrmagic2020/shared/dist/interfaces";
 import Breadcrumb from "react-bootstrap/Breadcrumb";
 import Container from "react-bootstrap/Container";
 import Alert from "react-bootstrap/Alert";
@@ -22,6 +25,7 @@ import Col from "react-bootstrap/Col";
 import Spinner from "react-bootstrap/Spinner";
 import ListGroup from "react-bootstrap/ListGroup";
 import ProgressBar from "react-bootstrap/ProgressBar";
+import Currency from "./Currency";
 
 const AircraftDetails: React.FC = () => {
   const { id = "" } = useParams<{ id: string }>();
@@ -81,14 +85,14 @@ const AircraftDetails: React.FC = () => {
     newContract.player = "";
     newContract.destination = "";
     if (typeof updatedAircraft === "number") {
-        const errCode = updatedAircraft;
-        switch (errCode) {
-            default:
-                alert(`Failed to create contract: Unknown error (${errCode})`);
-                break;
-        }
-        return;
-    };
+      const errCode = updatedAircraft;
+      switch (errCode) {
+        default:
+          alert(`Failed to create contract: Unknown error (${errCode})`);
+          break;
+      }
+      return;
+    }
     setAircraft(updatedAircraft);
     checkForActiveContract(updatedAircraft.contracts);
   };
@@ -131,7 +135,9 @@ const AircraftDetails: React.FC = () => {
     <Container fluid>
       <Breadcrumb>
         <Breadcrumb.Item href="/">Fleet Dashboard</Breadcrumb.Item>
-        <Breadcrumb.Item active>{aircraft.ac_model} {aircraft.registration}</Breadcrumb.Item>
+        <Breadcrumb.Item active>
+          {aircraft.ac_model} {aircraft.registration}
+        </Breadcrumb.Item>
       </Breadcrumb>
       <h1>Aircraft Details</h1>
       <Col xs={3}>
@@ -147,15 +153,17 @@ const AircraftDetails: React.FC = () => {
           </ListGroup.Item>
           <ListGroup.Item>
             Total Income:{" "}
-            {aircraft.contracts.reduce(
-              (acc: number, contract: IAircraftContract) =>
-                acc +
-                contract.profits.reduce(
-                  (acc: number, profit: number) => acc + profit,
-                  0
-                ),
-              0
-            )}
+            <Currency
+              value={aircraft.contracts.reduce(
+                (acc: number, contract: IAircraftContract) =>
+                  acc +
+                  contract.profits.reduce(
+                    (acc: number, profit: number) => acc + profit,
+                    0
+                  ),
+                0
+              )}
+            />
           </ListGroup.Item>
         </ListGroup>
       </Col>
@@ -204,16 +212,24 @@ const AircraftDetails: React.FC = () => {
                       </ListGroup.Item>
                       <ListGroup.Item>
                         Mean Profit:{" "}
-                        {contract.profits.length
-                          ? contract.profits.reduce((a, b) => a + b) /
+                        <Currency
+                          value={
                             contract.profits.length
-                          : 0}
+                              ? contract.profits.reduce((a, b) => a + b) /
+                                contract.profits.length
+                              : 0
+                          }
+                        />
                       </ListGroup.Item>
                       <ListGroup.Item>
                         Total Profit:{" "}
-                        {contract.profits.length
-                          ? contract.profits.reduce((a, b) => a + b)
-                          : 0}
+                        <Currency
+                          value={
+                            contract.profits.length
+                              ? contract.profits.reduce((a, b) => a + b)
+                              : 0
+                          }
+                        />
                       </ListGroup.Item>
                       <ListGroup.Item>
                         Progress:
