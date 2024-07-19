@@ -33,6 +33,9 @@ const FleetDashboard: React.FC = () => {
     contracts: []
   });
   const [isCreateLoading, setIsCreateLoading] = useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   useEffect(() => {
     const fetchAircraft = async () => {
@@ -92,14 +95,33 @@ const FleetDashboard: React.FC = () => {
       } else {
         alert(`Failed to create aircraft: ${error.message}`);
       }
+    } finally {
+      setNewAircraft({
+        ac_model: "",
+        size: "",
+        type: "",
+        registration: "",
+        configuration: { e: 0, b: 0, f: 0, cargo: 0 },
+        airport: "",
+        status: "Idle",
+        totalProfits: 0,
+        contracts: []
+      });
+      setIsCreateLoading(false);
     }
-    setIsCreateLoading(false);
   };
 
   const handleDeleteAircraft = async (id: string) => {
-    await deleteAircraft(id);
-    const data = await getAircraft();
-    setAircraft(data);
+    setIsDeleteLoading((prev) => ({ ...prev, [id]: true }));
+    try {
+      await deleteAircraft(id);
+      const data = await getAircraft();
+      setAircraft(data);
+    } catch (error: any) {
+      alert(`Failed to delete aircraft: ${error.message}`);
+    } finally {
+      setIsDeleteLoading((prev) => ({ ...prev, [id]: false }));
+    }
   };
 
   return (
@@ -182,7 +204,7 @@ const FleetDashboard: React.FC = () => {
                   className="ms-2"
                   onClick={() => handleDeleteAircraft(aircraft._id)}
                 >
-                  Delete
+                  {isDeleteLoading[aircraft._id] ? "Deleting..." : "Delete"}
                 </Button>
               </td>
             </tr>
