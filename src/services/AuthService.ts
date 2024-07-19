@@ -23,8 +23,8 @@ api.interceptors.response.use(
   }
 );
 
-export const register = async (username: string, password: string) => {
-  const response = await api.post("/auth/register", { username, password, role: UserRole.User });
+export const register = async (username: string, password: string, invitationCode: string) => {
+  const response = await api.post("/auth/register", { username, password, role: UserRole.User, invitationCode });
   console.log(response);
   return response.data;
 };

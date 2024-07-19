@@ -1,24 +1,43 @@
 import express, { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import User from "../models/user";
-import { auth, checkUniqueUsername } from "../middleware/auth";
+import Invitation from "../models/invitation";
+import {
+  auth,
+  INVITATION_MODE,
+  checkInvitationCode,
+  checkUniqueUsername
+} from "../middleware/auth";
 
 const router = express.Router();
 
 // Register a new user
-router.post("/register", checkUniqueUsername, async (req, res) => {
-  const { username, password, role } = req.body;
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ username, password: hashedPassword, role });
-    const newUser = await user.save();
-    res.status(201).json(newUser);
-  } catch (err: any) {
-    console.log(err);
-    res.status(400).json({ message: err.message });
+router.post(
+  "/register",
+  checkInvitationCode,
+  checkUniqueUsername,
+  async (req, res) => {
+    const { username, password, role, invitationCode } = req.body;
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = new User({ username, password: hashedPassword, role });
+      const newUser = await user.save();
+      // If invitation mode is enabled, decrement the remaining uses of the invitation code
+      if (INVITATION_MODE) {
+        const invitation = await Invitation.findOne({ code: invitationCode });
+        if (invitation) {
+          invitation.remainingUses -= 1;
+          await invitation.save();
+        }
+      }
+      res.status(201).json(newUser);
+    } catch (err: any) {
+      console.log(err);
+      res.status(400).json({ message: err.message });
+    }
   }
-});
+);
 
 // Login a user
 router.post("/login", async (req, res) => {
@@ -52,18 +71,23 @@ router.get("/me", auth, async (req: Request, res: Response) => {
 });
 
 // PUT update current user's username
-router.put("/me/username", auth, checkUniqueUsername, async (req: Request, res: Response) => {
-  try {
-    const user = await User.findById((req.user as any).id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+router.put(
+  "/me/username",
+  auth,
+  checkUniqueUsername,
+  async (req: Request, res: Response) => {
+    try {
+      const user = await User.findById((req.user as any).id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      user.username = req.body.username;
+      await user.save();
+      res.json(user);
+    } catch (err: any) {
+      res.status(500).json({ message: err.message });
     }
-    user.username = req.body.username;
-    await user.save();
-    res.json(user);
-  } catch (err: any) {
-    res.status(500).json({ message: err.message });
   }
-});
+);
 
 export default router;

@@ -13,3 +13,49 @@ export const getUsers = async () => {
     throw error;
   }
 };
+
+export const getAllInvitations = async () => {
+  try {
+    const response = await api.get("/invitation", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching invitations:", error);
+    throw error;
+  }
+};
+
+export const createInvitation = async (code: string, remainingUses: number) => {
+  try {
+    const response = await api.post(
+      "/invitation",
+      { code, remainingUses },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error creating invitation:", error);
+    throw error;
+  }
+};
+
+export const deleteInvitation = async (id: string) => {
+  try {
+    const response = await api.delete(`/invitation/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting invitation:", error);
+    throw error;
+  }
+};

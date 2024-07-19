@@ -1,9 +1,9 @@
-import { Router, Request, Response } from "express";
+import express, { Router, Request, Response } from "express";
 import User from "../models/user";
 import { auth } from "../middleware/auth";
 import { checkAdmin } from "../middleware/checkAdmin";
 
-const router = Router();
+const router = express.Router();
 
 router.use(auth);
 

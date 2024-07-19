@@ -12,22 +12,19 @@ import { Link } from "react-router-dom";
 const Register: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [invitationCode, setInvitationCode] = useState("");
   const navigate = useNavigate();
   const { login: loginContext } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await register(username, password);
+      await register(username, password, invitationCode);
       loginContext();
       navigate("/");
     } catch (err: any) {
       console.error("Failed to register", err);
-      let message = "Unknown error";
-      if (err.response.status === 400) {
-        message = "User already exists";
-      }
-      alert(`Registration failed: ${message}`);
+      alert(`Registration failed: ${err.response.data.message}`);
     }
   };
 
@@ -54,6 +51,18 @@ const Register: React.FC = () => {
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
               required
+            />
+          </FloatingLabel>
+          <br />
+          <FloatingLabel
+            controlId="floatingInvitationCode"
+            label="Invitation Code"
+          >
+            <Form.Control
+              type="invitationCode"
+              value={invitationCode}
+              placeholder="Invitation Code"
+              onChange={(e) => setInvitationCode(e.target.value)}
             />
           </FloatingLabel>
         </Col>

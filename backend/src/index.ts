@@ -6,6 +6,7 @@ import path from "path";
 import aircraftRoutes from "./routes/aircraft";
 import authRoutes from "./routes/auth";
 import adminRoutes from "./routes/admin";
+import invitationRoutes from "./routes/invitation";
 import { auth } from "./middleware/auth";
 
 dotenv.config();
@@ -25,8 +26,9 @@ mongoose
 
 // Use routes
 app.use("/api/auth", authRoutes);
-app.use("/api/aircraft", auth, aircraftRoutes); // Protect aircraft routes
+app.use("/api/aircraft", auth, aircraftRoutes);
 app.use("/api/admin", auth, adminRoutes);
+app.use("/api/invitation", auth, invitationRoutes);
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "client/dist")));
