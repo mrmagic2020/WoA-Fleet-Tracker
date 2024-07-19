@@ -46,19 +46,31 @@ const CustomNavbar: React.FC = () => {
         <Navbar.Brand>WoA Fleet Tracker</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav.Link href="/">Dashboard</Nav.Link>
           <Nav className="me-auto">
+            <Nav.Link href="/">Dashboard</Nav.Link>
             {isAuthenticated && role === UserRole.Admin && (
               <Nav.Link href="/admin">Admin</Nav.Link>
             )}
+            <Nav.Link href="https://forum.worldofairports.com/" target="_blank">
+              WoA
+            </Nav.Link>
+            <Nav.Link
+              href="https://github.com/mrmagic2020/WoA-Fleet-Tracker"
+              target="_blank"
+            >
+              GitHub
+            </Nav.Link>
             {isAuthenticated && (
-              <NavDropdown title={username} id="user-actions-dropdown">
-                <NavDropdown.Item onClick={handleShowChangeUsername}>
-                  Change Username
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
-              </NavDropdown>
+              <>
+                <Navbar.Text> | </Navbar.Text>
+                <NavDropdown title={username} id="user-actions-dropdown">
+                  <NavDropdown.Item onClick={handleShowChangeUsername}>
+                    Change Username
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
+                </NavDropdown>
+              </>
             )}
           </Nav>
         </Navbar.Collapse>
