@@ -150,7 +150,18 @@ const UserList: React.FC = () => {
           />
         </Form.Group>
         <br />
-        <Button variant="outline-primary" type="submit">
+        <Button
+          variant="outline-secondary"
+          onClick={() => {
+            setNewInvitation({
+              ...newInvitation,
+              code: Math.random().toString(36).substring(2, 15)
+            });
+          }}
+        >
+          Generate Code
+        </Button>
+        <Button variant="outline-primary" type="submit" className="ms-2">
           Create Invitation
         </Button>
       </Form>
