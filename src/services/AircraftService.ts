@@ -16,11 +16,65 @@ export enum SortMode {
   Descending
 }
 
+export enum FilterBy {
+  None = "none",
+  Model = "model",
+  Size = "size",
+  Type = "type",
+  Registration = "registration",
+  Airport = "airport",
+  Destination = "destination",
+  Status = "status"
+}
+
 export const getAircraft = async (
   sortBy: SortBy = SortBy.None,
-  sortMode: SortMode = SortMode.Ascending
+  sortMode: SortMode = SortMode.Ascending,
+  filterBy: FilterBy = FilterBy.None,
+  filterValue: string = ""
 ) => {
   const response = await api.get("/aircraft");
+  switch (filterBy) {
+    case FilterBy.Model:
+      response.data = response.data.filter((aircraft: IAircraft) =>
+        aircraft.ac_model.toLowerCase().includes(filterValue.toLowerCase())
+      );
+      break;
+    case FilterBy.Size:
+      response.data = response.data.filter(
+        (aircraft: IAircraft) => aircraft.size === filterValue
+      );
+      break;
+    case FilterBy.Type:
+      response.data = response.data.filter((aircraft: IAircraft) =>
+        aircraft.type.toLowerCase().includes(filterValue.toLowerCase())
+      );
+      break;
+    case FilterBy.Registration:
+      response.data = response.data.filter((aircraft: IAircraft) =>
+        aircraft.registration.toLowerCase().includes(filterValue.toLowerCase())
+      );
+      break;
+    case FilterBy.Airport:
+      response.data = response.data.filter(
+        (aircraft: IAircraft) => aircraft.airport === filterValue
+      );
+      break;
+    case FilterBy.Destination:
+      response.data = response.data.filter((aircraft: IAircraft) =>
+        aircraft.contracts.some((contract) =>
+          contract.destination.toLowerCase().includes(filterValue.toLowerCase())
+        )
+      );
+      break;
+    case FilterBy.Status:
+      response.data = response.data.filter((aircraft: IAircraft) =>
+        aircraft.status.toLowerCase().includes(filterValue.toLowerCase())
+      );
+      break;
+    default:
+      break;
+  }
   switch (sortBy) {
     case SortBy.Registration:
       response.data.sort((a: IAircraft, b: IAircraft) => {

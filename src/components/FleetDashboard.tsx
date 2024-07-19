@@ -5,10 +5,16 @@ import {
   createAircraft,
   deleteAircraft,
   SortBy,
-  SortMode
+  SortMode,
+  FilterBy
 } from "../services/AircraftService";
 import { aircraftTypes } from "../AircraftData";
-import { AircraftStatus, AirportCode } from "@mrmagic2020/shared/dist/enums";
+import {
+  AircraftSize,
+  AircraftStatus,
+  AircraftType,
+  AirportCode
+} from "@mrmagic2020/shared/dist/enums";
 import { IAircraft } from "@mrmagic2020/shared/dist/interfaces";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
@@ -30,6 +36,9 @@ const FleetDashboard: React.FC = () => {
     { name: "Descending", value: SortMode.Descending }
   ];
 
+  const [filterBy, setFilterBy] = useState(FilterBy.None);
+  const [filterValue, setFilterValue] = useState("");
+
   const [aircraft, setAircraft] = useState<IAircraft[]>([]);
   const [newAircraft, setNewAircraft] = useState({
     ac_model: "",
@@ -50,33 +59,34 @@ const FleetDashboard: React.FC = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedAircraftId, setSelectedAircraftId] = useState("");
 
-  useEffect(() => {
-    const fetchAircraft = async () => {
-      const data = await getAircraft(sortBy, sortMode);
-      setAircraft(data);
-    };
+  const fetchAircraftWithSortAndFilter = async () => {
+    const data = await getAircraft(sortBy, sortMode, filterBy, filterValue);
+    setAircraft(data);
+  };
 
-    fetchAircraft();
-  }, []);
+  useEffect(() => {
+    fetchAircraftWithSortAndFilter();
+  }, [sortBy, sortMode, filterBy, filterValue]);
 
   const handleSortByChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value as SortBy);
-    const fetchAircraft = async () => {
-      const data = await getAircraft(e.target.value as SortBy, sortMode);
-      setAircraft(data);
-    };
-
-    fetchAircraft();
   };
 
   const handleSortModeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSortMode(parseInt(e.target.value));
-    const fetchAircraft = async () => {
-      const data = await getAircraft(sortBy, parseInt(e.target.value));
-      setAircraft(data);
-    };
+  };
 
-    fetchAircraft();
+  const handleFilterByChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilterBy(e.target.value as FilterBy);
+  };
+
+  const handleFilterValueChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    setFilterValue(e.target.value);
+    fetchAircraftWithSortAndFilter();
   };
 
   const handleAircraftInputChange = (
@@ -188,6 +198,117 @@ const FleetDashboard: React.FC = () => {
                 </ToggleButton>
               ))}
             </ButtonGroup>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs="auto">
+            <Form.Label htmlFor="filterBy">Filter by</Form.Label>
+          </Col>
+          <Col xs="auto">
+            <Form.Select
+              size="sm"
+              id="filterBy"
+              value={filterBy}
+              onChange={handleFilterByChange}
+            >
+              {Object.values(FilterBy).map((filter) => (
+                <option key={filter} value={filter}>
+                  {filter}
+                </option>
+              ))}
+            </Form.Select>
+          </Col>
+          <Col xs="auto">
+            {filterBy === FilterBy.Model && (
+              <Form.Select
+                size="sm"
+                value={filterValue}
+                onChange={handleFilterValueChange}
+              >
+                <option value="" disabled>
+                  Select Model
+                </option>
+                {aircraftTypes.map((type) => (
+                  <option key={type.Aircraft} value={type.Aircraft}>
+                    {type.Aircraft}
+                  </option>
+                ))}
+              </Form.Select>
+            )}
+            {filterBy === FilterBy.Size && (
+              <Form.Select
+                size="sm"
+                value={filterValue}
+                onChange={handleFilterValueChange}
+              >
+                <option value="" disabled>
+                  Select Size
+                </option>
+                {Object.values(AircraftSize).map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </Form.Select>
+            )}
+            {filterBy === FilterBy.Type && (
+              <Form.Select
+                size="sm"
+                value={filterValue}
+                onChange={handleFilterValueChange}
+              >
+                <option value="" disabled>
+                  Select Type
+                </option>
+                {Object.values(AircraftType).map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </Form.Select>
+            )}
+            {filterBy === FilterBy.Airport && (
+              <Form.Select
+                size="sm"
+                value={filterValue}
+                onChange={handleFilterValueChange}
+              >
+                <option value="" disabled>
+                  Select Airport
+                </option>
+                {Object.values(AirportCode).map((airport) => (
+                  <option key={airport} value={airport}>
+                    {airport}
+                  </option>
+                ))}
+              </Form.Select>
+            )}
+            {(filterBy === FilterBy.Destination ||
+              filterBy === FilterBy.Registration) && (
+              <Form.Control
+                size="sm"
+                type="text"
+                value={filterValue}
+                onChange={handleFilterValueChange}
+                placeholder="Search..."
+              />
+            )}
+            {filterBy === FilterBy.Status && (
+              <Form.Select
+                size="sm"
+                value={filterValue}
+                onChange={handleFilterValueChange}
+              >
+                <option value="" disabled>
+                  Select Status
+                </option>
+                {Object.values(AircraftStatus).map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </Form.Select>
+            )}
           </Col>
         </Row>
       </Form>
