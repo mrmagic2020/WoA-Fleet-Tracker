@@ -40,5 +40,6 @@
     "react-bootstrap": "^2.10.4",
     "react-router-dom": "^6.25.0",
     "serve": "^14.2.3"
-  }
+  },
+  "proxy": "http://localhost:6060"
 }
