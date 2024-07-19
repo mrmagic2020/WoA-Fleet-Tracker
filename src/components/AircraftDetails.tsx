@@ -37,6 +37,9 @@ const AircraftDetails: React.FC = () => {
     destination: ""
   });
   const [newProfit, setNewProfit] = useState(NaN);
+  const [isProfitLogging, setIsProfitLogging] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [hasActiveContract, setHasActiveContract] = useState(false);
   const [deletingContract, setDeletingContract] = useState<any>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -99,11 +102,18 @@ const AircraftDetails: React.FC = () => {
 
   const handleLogProfit = async (contractId: string) => {
     if (!aircraft) return;
-    const updatedAircraft = await logProfit(id, contractId, newProfit);
-    setNewProfit(NaN);
-    setAircraft(updatedAircraft);
-    if (updatedAircraft) {
-      checkForActiveContract(updatedAircraft.contracts);
+    setIsProfitLogging({ ...isProfitLogging, [contractId]: true });
+    try {
+      const updatedAircraft = await logProfit(id, contractId, newProfit);
+      setNewProfit(NaN);
+      setAircraft(updatedAircraft);
+      if (updatedAircraft) {
+        checkForActiveContract(updatedAircraft.contracts);
+      }
+    } catch (error: any) {
+      alert(`Failed to log profit: ${error.response.data.message}`);
+    } finally {
+      setIsProfitLogging({ ...isProfitLogging, [contractId]: false });
     }
   };
 
@@ -140,7 +150,7 @@ const AircraftDetails: React.FC = () => {
         </Breadcrumb.Item>
       </Breadcrumb>
       <h1>Aircraft Details</h1>
-      <Col xs={3}>
+      <Col xs="auto">
         <ListGroup>
           <ListGroup.Item>Model: {aircraft.ac_model}</ListGroup.Item>
           <ListGroup.Item>Size: {aircraft.size}</ListGroup.Item>
@@ -207,7 +217,9 @@ const AircraftDetails: React.FC = () => {
                           Player: {contract.player}
                         </ListGroup.Item>
                       )}
-                      <ListGroup.Item>
+                      <ListGroup.Item
+                        style={{ height: "66px", overflow: "auto" }}
+                      >
                         Profits: {contract.profits.join(", ")}
                       </ListGroup.Item>
                       <ListGroup.Item>
@@ -270,35 +282,58 @@ const AircraftDetails: React.FC = () => {
                                   variant="outline-primary"
                                   size="sm"
                                   type="submit"
-                                  disabled={contract && contract.finished}
+                                  disabled={
+                                    (contract && contract.finished) ||
+                                    isProfitLogging[contract._id]
+                                  }
                                 >
-                                  Log Profit
+                                  {isProfitLogging[contract._id] ? (
+                                    <Spinner
+                                      as="span"
+                                      animation="border"
+                                      size="sm"
+                                      role="status"
+                                      aria-hidden="true"
+                                    />
+                                  ) : (
+                                    "Log Profit"
+                                  )}
                                 </Button>
                               </Col>
                             </Row>
                           </Form>
                         )}
                       </ListGroup.Item>
+                      <ListGroup.Item>
+                        <Row>
+                          {!contract.finished && (
+                            <Col>
+                              <Button
+                                variant="outline-success"
+                                size="sm"
+                                onClick={() =>
+                                  handleFinishContract(contract._id)
+                                }
+                              >
+                                Finish Contract
+                              </Button>
+                            </Col>
+                          )}
+                          <Col>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => {
+                                setDeletingContract(contract);
+                                setShowDeleteModal(true);
+                              }}
+                            >
+                              Delete Contract
+                            </Button>
+                          </Col>
+                        </Row>
+                      </ListGroup.Item>
                     </ListGroup>
-                    {!contract.finished && (
-                      <Button
-                        variant="outline-success"
-                        size="sm"
-                        onClick={() => handleFinishContract(contract._id)}
-                      >
-                        Finish Contract
-                      </Button>
-                    )}
-                    <Button
-                      variant="outline-danger"
-                      size="sm"
-                      onClick={() => {
-                        setDeletingContract(contract);
-                        setShowDeleteModal(true);
-                      }}
-                    >
-                      Delete Contract
-                    </Button>
                   </Card.Text>
                 </Card.Body>
               </Card>
