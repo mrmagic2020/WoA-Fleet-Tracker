@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   getUsers,
+  deleteUser,
   createInvitation,
   getAllInvitations,
   deleteInvitation
@@ -15,7 +16,7 @@ import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 
 const UserList: React.FC = () => {
-  const role = useAuth().role;
+  const { username, role } = useAuth();
   const [users, setUsers] = useState([]);
   const [invitations, setInvitations] = useState<
     { code: string; remainingUses: number }[]
@@ -46,6 +47,16 @@ const UserList: React.FC = () => {
     fetchUsers();
     fetchInvitations();
   }, []);
+
+  const handleDeleteUser = async (id: string) => {
+    try {
+      await deleteUser(id);
+      const users = await getUsers();
+      setUsers(users);
+    } catch (error) {
+      console.error("Failed to delete user:", error);
+    }
+  };
 
   const handleInvitationInputChange = (
     e: React.ChangeEvent<
@@ -144,7 +155,7 @@ const UserList: React.FC = () => {
         </Button>
       </Form>
 
-      <h2>Registered Users</h2>
+      <h2>Registered Users ({users.length})</h2>
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -159,9 +170,15 @@ const UserList: React.FC = () => {
               <td>{user.username}</td>
               <td>{user.role}</td>
               <td>
-                <Button variant="outline-danger" size="sm">
-                  Delete
-                </Button>
+                {user.username !== username && (
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={() => handleDeleteUser(user._id)}
+                  >
+                    Delete
+                  </Button>
+                )}
               </td>
             </tr>
           ))}

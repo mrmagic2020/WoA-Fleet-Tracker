@@ -17,13 +17,13 @@ router.get("/users", checkAdmin, async (req: Request, res: Response) => {
   }
 });
 
-// GET current user's information
-router.get("/me", auth, async (req: Request, res: Response) => {
+// DELETE a user (protected route)
+router.delete("/users/:id", checkAdmin, async (req: Request, res: Response) => {
   try {
-    const user = await User.findById((req.user as any).id);
-    res.json(user);
-  } catch (err: any) {
-    res.status(500).json({ message: err.message });
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: "Deleted User" });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 });
 

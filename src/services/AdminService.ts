@@ -14,6 +14,20 @@ export const getUsers = async () => {
   }
 };
 
+export const deleteUser = async (id: string) => {
+  try {
+    const response = await api.delete(`/admin/users/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    throw error;
+  }
+};
+
 export const getAllInvitations = async () => {
   try {
     const response = await api.get("/invitation", {
