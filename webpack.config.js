@@ -1,3 +1,4 @@
+const webpack = require("webpack");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
@@ -34,6 +35,11 @@ module.exports = {
       patterns: [
         { from: "public", to: "", globOptions: { ignore: ["**/index.html"] } }
       ]
+    }),
+    new webpack.DefinePlugin({
+      "process.env.REACT_APP_API_BASE_URL": JSON.stringify(
+        process.env.REACT_APP_API_BASE_URL
+      )
     })
   ],
   devServer: {

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://woa-fleet-tracker-1ecffa10696a.herokuapp.com/api"
+  baseURL: process.env.REACT_APP_API_BASE_URL || "http://localhost:6060/api"
 });
 
 export default api;
