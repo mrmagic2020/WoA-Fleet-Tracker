@@ -8,6 +8,7 @@ import authRoutes from "./routes/auth";
 import adminRoutes from "./routes/admin";
 import invitationRoutes from "./routes/invitation";
 import { auth } from "./middleware/auth";
+import Aircraft from "./models/aircraft";
 
 dotenv.config();
 

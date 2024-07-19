@@ -16,6 +16,7 @@ import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Badge from "react-bootstrap/Badge";
+import Currency from "./Currency";
 
 const FleetDashboard: React.FC = () => {
   const [sortBy, setSortBy] = useState(SortBy.None);
@@ -28,6 +29,7 @@ const FleetDashboard: React.FC = () => {
     configuration: { e: 0, b: 0, f: 0, cargo: 0 },
     airport: "",
     status: "Idle",
+    totalProfits: 0,
     contracts: []
   });
 
@@ -78,6 +80,7 @@ const FleetDashboard: React.FC = () => {
 
   const handleCreateAircraft = async () => {
     try {
+      console.log(newAircraft);
       await createAircraft(newAircraft);
       const data = await getAircraft();
       setAircraft(data);
@@ -130,6 +133,7 @@ const FleetDashboard: React.FC = () => {
             <th>Registration</th>
             <th>Airport</th>
             <th>Destination</th>
+            <th>Total Profits</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
@@ -144,6 +148,9 @@ const FleetDashboard: React.FC = () => {
               <td>{aircraft.airport}</td>
               <td>
                 {aircraft.contracts[aircraft.contracts.length - 1]?.destination}
+              </td>
+              <td>
+                <Currency value={aircraft.totalProfits}></Currency>
               </td>
               {aircraft.status === AircraftStatus.InService && (
                 <td>

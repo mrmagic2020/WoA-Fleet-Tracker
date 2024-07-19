@@ -11,6 +11,7 @@ interface IAircraft extends Document {
   configuration: IAircraftConfiguration;
   airport: AirportCode;
   status: AircraftStatus;
+  totalProfits: number;
   contracts: IAircraftContract[];
 }
 
@@ -28,6 +29,7 @@ const aircraftSchema: Schema = new Schema({
   },
   airport: { type: String, enum: Object.values(AirportCode), required: true },
   status: { type: String, enum: Object.values(AircraftStatus), required: true },
+  totalProfits: { type: Number, required: true },
   contracts: [
     {
       contractType: {

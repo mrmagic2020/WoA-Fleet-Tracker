@@ -32,6 +32,7 @@ router.post("/", async (req: Request, res: Response) => {
     airport: req.body.airport,
     status: req.body.status,
     contracts: req.body.contracts,
+    totalProfits: req.body.totalProfits,
     user: (req.user as any).id
   });
 
@@ -40,7 +41,9 @@ router.post("/", async (req: Request, res: Response) => {
       registration: aircraft.registration
     });
     if (existingAircraft) {
-      return res.status(400).json({ message: "Registration code already exists" });
+      return res
+        .status(400)
+        .json({ message: "Registration code already exists" });
     }
     const newAircraft = await aircraft.save();
     res.status(201).json(newAircraft);
@@ -166,6 +169,8 @@ router.post(
   getAircraft,
   async (req: Request, res: Response) => {
     const aircraft = res.aircraft;
+    aircraft.totalProfits += req.body.profit;
+
     const contract = aircraft.contracts.id(req.params.contractId);
 
     if (!contract) {

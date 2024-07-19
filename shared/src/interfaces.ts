@@ -25,6 +25,7 @@ export interface IAircraft {
   configuration: IAircraftConfiguration;
   airport: AirportCode;
   status: AircraftStatus;
+  totalProfits: number;
   contracts: IAircraftContract[];
   _id: string;
 }

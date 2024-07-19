@@ -7,7 +7,8 @@ export enum SortBy {
   Status = "status",
   Airport = "airport",
   Type = "type",
-  Size = "size"
+  Size = "size",
+  TotalProfits = "total profits"
 }
 
 export const getAircraft = async (sortBy: SortBy = SortBy.None) => {
@@ -38,6 +39,11 @@ export const getAircraft = async (sortBy: SortBy = SortBy.None) => {
         const sizeOrder = ["S", "M", "L", "X"];
         return sizeOrder.indexOf(a.size) - sizeOrder.indexOf(b.size);
       });
+      break;
+    case SortBy.TotalProfits:
+      response.data.sort(
+        (a: IAircraft, b: IAircraft) => a.totalProfits - b.totalProfits
+      );
       break;
     default:
       break;
