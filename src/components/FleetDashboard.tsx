@@ -350,9 +350,7 @@ const FleetDashboard: React.FC = () => {
               <td>{aircraft.type}</td>
               <td>{aircraft.registration}</td>
               <td>{aircraft.airport}</td>
-              <td>
-                {aircraft.contracts[aircraft.contracts.length - 1]?.destination}
-              </td>
+              <td>{aircraft.contracts[0]?.destination}</td>
               <td>
                 <Currency value={aircraft.totalProfits}></Currency>
               </td>
@@ -441,7 +439,10 @@ const FleetDashboard: React.FC = () => {
         <Modal.Header closeButton>
           <Modal.Title>Sell Aircraft</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to sell and archive this aircraft? This action cannot be undone.</Modal.Body>
+        <Modal.Body>
+          Are you sure you want to sell and archive this aircraft? This action
+          cannot be undone.
+        </Modal.Body>
         <Modal.Footer>
           <Button
             variant="outline-secondary"
