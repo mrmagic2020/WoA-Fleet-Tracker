@@ -28,7 +28,9 @@ const Login: React.FC = () => {
     try {
       const { user } = await login(username, password);
       loginContext(user);
-      navigate("/");
+      const redirectTo = sessionStorage.getItem("redirectAfterAuth") || "/";
+      sessionStorage.removeItem("redirectAfterAuth");
+      navigate(redirectTo);
     } catch (err: any) {
       console.error("Failed to login", err);
       alert(`Login failed: ${err.response.data.message}`);
