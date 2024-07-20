@@ -9,6 +9,7 @@ import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { Link } from "react-router-dom";
+import "../styles/Register.css";
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -43,10 +44,10 @@ const Register: React.FC = () => {
   };
 
   return (
-    <Container fluid>
+    <Container fluid className="register-container">
       <Row className="min-vh-100">
         <Col xs={12} md={6} lg={4}>
-          <Form className="p-4 border rounded shadow" onSubmit={handleSubmit}>
+          <Form className="register-form" onSubmit={handleSubmit}>
             <h2>Register</h2>
             <br />
             <FloatingLabel

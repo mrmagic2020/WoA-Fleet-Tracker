@@ -9,6 +9,7 @@ import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { Link } from "react-router-dom";
+import "../styles/Login.css";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -37,10 +38,10 @@ const Login: React.FC = () => {
   };
 
   return (
-    <Container fluid>
+    <Container fluid className="login-container">
       <Row className="min-vh-100">
         <Col xs={12} md={6} lg={4}>
-          <Form className="p-4 border rounded shadow" onSubmit={handleSubmit}>
+          <Form className="login-form" onSubmit={handleSubmit}>
             <h2>Login</h2>
             <br />
             <FloatingLabel
