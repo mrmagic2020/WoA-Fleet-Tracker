@@ -7,7 +7,11 @@ import {
   finishContract,
   deleteContract
 } from "../services/AircraftService";
-import { AirportCode, ContractType } from "@mrmagic2020/shared/dist/enums";
+import {
+  AircraftStatus,
+  AirportCode,
+  ContractType
+} from "@mrmagic2020/shared/dist/enums";
 import {
   IAircraft,
   IAircraftContract
@@ -368,97 +372,102 @@ const AircraftDetails: React.FC = () => {
         </Modal.Footer>
       </Modal>
 
-      <h2>Create New Contract</h2>
-      <Form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleCreateContract();
-        }}
-      >
-        <Row>
-          <Col>
-            <Form.Select
-              name="contractType"
-              value={newContract.contractType}
-              onChange={handleInputChange}
-              required
-              disabled={hasActiveContract}
-            >
-              <option value="" disabled>
-                Select Contract Type
-              </option>
-              {Object.values(ContractType).map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </Form.Select>
-          </Col>
-          {newContract.contractType === ContractType.Player && (
-            <Col>
-              <Form.Control
-                type="text"
-                name="player"
-                value={newContract.player}
-                onChange={handleInputChange}
-                placeholder="Player Name"
-                required
-                disabled={hasActiveContract}
-              />
-            </Col>
-          )}
-          {newContract.contractType === ContractType.Player ? (
-            <Col>
-              <Form.Select
-                name="destination"
-                value={newContract.destination}
-                onChange={handleInputChange}
-                required
-                disabled={hasActiveContract}
-              >
-                <option value="" disabled>
-                  Select Destination
-                </option>
-                {Object.values(AirportCode).map((airport) => {
-                  if (airport === aircraft.airport) return null;
-                  return (
-                    <option key={airport} value={airport}>
-                      {airport}
+      {aircraft.status !== AircraftStatus.Sold && (
+        <>
+          <h2>Create New Contract</h2>
+          <Form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleCreateContract();
+            }}
+          >
+            <Row>
+              <Col>
+                <Form.Select
+                  name="contractType"
+                  value={newContract.contractType}
+                  onChange={handleInputChange}
+                  required
+                  disabled={hasActiveContract}
+                >
+                  <option value="" disabled>
+                    Select Contract Type
+                  </option>
+                  {Object.values(ContractType).map((type) => (
+                    <option key={type} value={type}>
+                      {type}
                     </option>
-                  );
-                })}
-              </Form.Select>
-            </Col>
-          ) : (
-            <Col>
-              <Form.Control
-                type="text"
-                name="destination"
-                value={newContract.destination}
-                onChange={handleInputChange}
-                placeholder="Destination"
-                required
-                disabled={hasActiveContract}
-              />
-            </Col>
-          )}
-          <Col>
-            <Button
-              variant="outline-primary"
-              type="submit"
-              disabled={hasActiveContract}
-            >
-              Create Contract
-            </Button>
-          </Col>
-        </Row>
-        <br />
-        {hasActiveContract && (
-          <Alert key="warning" variant="warning">
-            You cannot create a new contract while you have an active contract.
-          </Alert>
-        )}
-      </Form>
+                  ))}
+                </Form.Select>
+              </Col>
+              {newContract.contractType === ContractType.Player && (
+                <Col>
+                  <Form.Control
+                    type="text"
+                    name="player"
+                    value={newContract.player}
+                    onChange={handleInputChange}
+                    placeholder="Player Name"
+                    required
+                    disabled={hasActiveContract}
+                  />
+                </Col>
+              )}
+              {newContract.contractType === ContractType.Player ? (
+                <Col>
+                  <Form.Select
+                    name="destination"
+                    value={newContract.destination}
+                    onChange={handleInputChange}
+                    required
+                    disabled={hasActiveContract}
+                  >
+                    <option value="" disabled>
+                      Select Destination
+                    </option>
+                    {Object.values(AirportCode).map((airport) => {
+                      if (airport === aircraft.airport) return null;
+                      return (
+                        <option key={airport} value={airport}>
+                          {airport}
+                        </option>
+                      );
+                    })}
+                  </Form.Select>
+                </Col>
+              ) : (
+                <Col>
+                  <Form.Control
+                    type="text"
+                    name="destination"
+                    value={newContract.destination}
+                    onChange={handleInputChange}
+                    placeholder="Destination"
+                    required
+                    disabled={hasActiveContract}
+                  />
+                </Col>
+              )}
+              <Col>
+                <Button
+                  variant="outline-primary"
+                  type="submit"
+                  disabled={hasActiveContract}
+                >
+                  Create Contract
+                </Button>
+              </Col>
+            </Row>
+            <br />
+            {hasActiveContract && (
+              <Alert key="warning" variant="warning">
+                You cannot create a new contract while you have an active
+                contract.
+              </Alert>
+            )}
+          </Form>
+        </>
+      )}
     </Container>
   );
 };

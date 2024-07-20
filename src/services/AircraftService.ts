@@ -152,6 +152,11 @@ export const createAircraft = async (aircraft: any) => {
   }
 };
 
+export const sellAircraft = async (id: string) => {
+  const response = await api.put(`/aircraft/${id}/sell`);
+  return response.data as IAircraft;
+};
+
 export const deleteAircraft = async (id: string) => {
   const response = await api.delete(`/aircraft/${id}`);
   return response.data;

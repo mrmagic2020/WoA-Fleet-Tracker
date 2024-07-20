@@ -1,6 +1,6 @@
 {
   "name": "@mrmagic2020/shared",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "main": "index.js",
   "files": [
     "dist"
@@ -11,7 +11,7 @@
   "keywords": [],
   "author": "mrmagic2020",
   "license": "GPL-3.0-only",
-  "description": "",
+  "description": "Shared module for WoA Fleet Tracker.",
   "devDependencies": {
     "typescript": "^5.5.3"
   },

@@ -12,7 +12,7 @@
   "license": "GPL-3.0-only",
   "description": "The backend project for the World of Airports fleet tracker.",
   "dependencies": {
-    "@mrmagic2020/shared": "^1.0.6",
+    "@mrmagic2020/shared": "^1.0.7",
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",

@@ -52,6 +52,22 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
+// PUT sell an aircraft
+router.put("/:id/sell", getAircraft, async (req: Request, res: Response) => {
+  const aircraft = res.aircraft;
+  aircraft.status = AircraftStatus.Sold;
+  aircraft.contracts.forEach((contract: any) => {
+    contract.finished = true;
+  });
+
+  try {
+    const updatedAircraft = await aircraft.save();
+    res.json(updatedAircraft);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
 // DELETE an aircraft
 router.delete("/:id", getAircraft, async (req: Request, res: Response) => {
   try {

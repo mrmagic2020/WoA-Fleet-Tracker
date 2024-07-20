@@ -6,7 +6,8 @@ import {
   deleteAircraft,
   SortBy,
   SortMode,
-  FilterBy
+  FilterBy,
+  sellAircraft
 } from "../services/AircraftService";
 import { aircraftTypes } from "../AircraftData";
 import {
@@ -53,9 +54,11 @@ const FleetDashboard: React.FC = () => {
   });
 
   const [isCreateLoading, setIsCreateLoading] = useState(false);
+  const [isSellLoading, setIsSellLoading] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState<{
     [key: string]: boolean;
   }>({});
+  const [showSellModal, setShowSellModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedAircraftId, setSelectedAircraftId] = useState("");
 
@@ -141,6 +144,19 @@ const FleetDashboard: React.FC = () => {
         contracts: []
       });
       setIsCreateLoading(false);
+    }
+  };
+
+  const handleSellAircraft = async (id: string) => {
+    setIsSellLoading(true);
+    try {
+      await sellAircraft(id);
+      const data = await getAircraft();
+      setAircraft(data);
+    } catch (error: any) {
+      alert(`Failed to sell aircraft: ${error.message}`);
+    } finally {
+      setIsSellLoading(false);
     }
   };
 
@@ -345,26 +361,44 @@ const FleetDashboard: React.FC = () => {
                   <Badge bg="success">{aircraft.status}</Badge>
                 </td>
               )}
-              {aircraft.status === AircraftStatus.ContractPending && (
-                <td>
-                  <Badge bg="warning">{aircraft.status}</Badge>
-                </td>
-              )}
               {aircraft.status === AircraftStatus.Idle && (
                 <td>
                   <Badge bg="danger">{aircraft.status}</Badge>
                 </td>
               )}
+              {aircraft.status === AircraftStatus.Sold && (
+                <td>
+                  <Badge bg="secondary">{aircraft.status}</Badge>
+                </td>
+              )}
               <td>
                 <Link to={`/aircraft/${aircraft._id}`}>
-                  <Button variant="outline-info" size="sm">
+                  <Button
+                    variant="outline-info"
+                    size="sm"
+                    style={{ width: "4rem" }}
+                  >
                     Details
                   </Button>
                 </Link>
                 <Button
+                  variant="outline-warning"
+                  size="sm"
+                  className="ms-2"
+                  style={{ width: "4rem" }}
+                  disabled={aircraft.status === AircraftStatus.Sold}
+                  onClick={() => {
+                    setSelectedAircraftId(aircraft._id);
+                    setShowSellModal(true);
+                  }}
+                >
+                  {aircraft.status === AircraftStatus.Sold ? "Sold" : "Sell"}
+                </Button>
+                <Button
                   variant="outline-danger"
                   size="sm"
                   className="ms-2"
+                  style={{ width: "4rem" }}
                   onClick={() => {
                     setSelectedAircraftId(aircraft._id);
                     setShowDeleteModal(true);
@@ -399,6 +433,31 @@ const FleetDashboard: React.FC = () => {
             }}
           >
             {isDeleteLoading[selectedAircraftId] ? "Deleting..." : "Delete"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showSellModal} onHide={() => setShowSellModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Sell Aircraft</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to sell and archive this aircraft? This action cannot be undone.</Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="outline-secondary"
+            onClick={() => setShowSellModal(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="outline-warning"
+            disabled={isSellLoading}
+            onClick={() => {
+              handleSellAircraft(selectedAircraftId);
+              setShowSellModal(false);
+            }}
+          >
+            {isSellLoading ? "Selling..." : "Sell"}
           </Button>
         </Modal.Footer>
       </Modal>

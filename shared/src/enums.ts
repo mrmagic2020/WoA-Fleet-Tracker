@@ -13,7 +13,7 @@ export enum AircraftType {
 export enum AircraftStatus {
   Idle = "Idle",
   InService = "In Service",
-  ContractPending = "Contract Pending"
+  Sold = "Sold"
 }
 
 export enum AirportCode {
