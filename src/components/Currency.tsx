@@ -3,12 +3,13 @@ import Image from "react-bootstrap/Image";
 
 interface CurrencyProps {
   value: number;
+  decimals?: number;
 }
 
-const Currency: React.FC<CurrencyProps> = ({ value }) => {
+const Currency: React.FC<CurrencyProps> = ({ value, decimals = 2 }) => {
   return (
     <span>
-      {value}{" "}
+      {value.toFixed(decimals)}{" "}
       <Image
         src="/assets/wollar.png"
         alt="wollars"

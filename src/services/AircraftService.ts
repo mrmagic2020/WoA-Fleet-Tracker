@@ -8,7 +8,8 @@ export enum SortBy {
   Airport = "airport",
   Type = "type",
   Size = "size",
-  TotalProfits = "total profits"
+  TotalProfits = "total profits",
+  CurrentMeanProfit = "current mean profit"
 }
 
 export enum SortMode {
@@ -123,6 +124,20 @@ export const getAircraft = async (
           return a.totalProfits - b.totalProfits;
         }
         return b.totalProfits - a.totalProfits;
+      });
+      break;
+    case SortBy.CurrentMeanProfit:
+      response.data.sort((a: IAircraft, b: IAircraft) => {
+        const aMeanProfit =
+          a.contracts[0]?.profits.reduce((acc, profit) => acc + profit, 0) /
+          a.contracts[0]?.profits.length;
+        const bMeanProfit =
+          b.contracts[0]?.profits.reduce((acc, profit) => acc + profit, 0) /
+          b.contracts[0]?.profits.length;
+        if (sortMode === SortMode.Ascending) {
+          return aMeanProfit - bMeanProfit;
+        }
+        return bMeanProfit - aMeanProfit;
       });
       break;
     default:

@@ -245,6 +245,7 @@ const AircraftDetails: React.FC = () => {
                               ? contract.profits.reduce((a, b) => a + b)
                               : 0
                           }
+                          decimals={0}
                         />
                       </ListGroup.Item>
                       <ListGroup.Item>

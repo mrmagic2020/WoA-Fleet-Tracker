@@ -337,6 +337,7 @@ const FleetDashboard: React.FC = () => {
             <th>Registration</th>
             <th>Airport</th>
             <th>Destination</th>
+            <th>Current Mean Profit</th>
             <th>Total Profits</th>
             <th>Status</th>
             <th>Actions</th>
@@ -352,7 +353,15 @@ const FleetDashboard: React.FC = () => {
               <td>{aircraft.airport}</td>
               <td>{aircraft.contracts[0]?.destination}</td>
               <td>
-                <Currency value={aircraft.totalProfits}></Currency>
+                <Currency
+                  value={
+                    aircraft.contracts[0]?.profits.reduce((a, b) => a + b, 0) /
+                    aircraft.contracts[0]?.profits.length
+                  }
+                ></Currency>
+              </td>
+              <td>
+                <Currency value={aircraft.totalProfits} decimals={0}></Currency>
               </td>
               {aircraft.status === AircraftStatus.InService && (
                 <td>
