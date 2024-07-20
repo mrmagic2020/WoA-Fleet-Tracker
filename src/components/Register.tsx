@@ -58,6 +58,7 @@ const Register: React.FC = () => {
                 type="username"
                 value={username}
                 placeholder="Username"
+                autoComplete="off"
                 onChange={(e) => setUsername(e.target.value)}
                 required
               />
@@ -84,6 +85,7 @@ const Register: React.FC = () => {
                 type="invitationCode"
                 value={invitationCode}
                 placeholder="Invitation Code"
+                autoComplete="off"
                 onChange={(e) => setInvitationCode(e.target.value)}
               />
             </FloatingLabel>
