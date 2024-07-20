@@ -62,8 +62,7 @@ const CustomNavbar: React.FC = () => {
             </Nav.Link>
             {isAuthenticated && (
               <>
-                <Navbar.Text> | </Navbar.Text>
-                <NavDropdown title={username} id="user-actions-dropdown">
+                <NavDropdown title={username} id="user-actions-dropdown" className="ms-3">
                   <NavDropdown.Item onClick={handleShowChangeUsername}>
                     Change Username
                   </NavDropdown.Item>

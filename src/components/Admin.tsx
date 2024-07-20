@@ -25,6 +25,9 @@ const UserList: React.FC = () => {
     code: "",
     remainingUses: NaN
   });
+  const [isInvitationCopied, setIsInvitationCopied] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -48,16 +51,6 @@ const UserList: React.FC = () => {
     fetchInvitations();
   }, []);
 
-  const handleDeleteUser = async (id: string) => {
-    try {
-      await deleteUser(id);
-      const users = await getUsers();
-      setUsers(users);
-    } catch (error) {
-      console.error("Failed to delete user:", error);
-    }
-  };
-
   const handleInvitationInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -80,6 +73,14 @@ const UserList: React.FC = () => {
     }
   };
 
+  const handleCopyInvitationCode = (id: string, code: string) => {
+    navigator.clipboard.writeText(code);
+    setIsInvitationCopied({ ...isInvitationCopied, [id]: true });
+    setTimeout(() => {
+      setIsInvitationCopied({ ...isInvitationCopied, [id]: false });
+    }, 2000);
+  };
+
   const handleDeleteInvitation = async (id: string) => {
     try {
       await deleteInvitation(id);
@@ -87,6 +88,16 @@ const UserList: React.FC = () => {
       setInvitations(invitations);
     } catch (error) {
       console.error("Failed to delete invitation:", error);
+    }
+  };
+
+  const handleDeleteUser = async (id: string) => {
+    try {
+      await deleteUser(id);
+      const users = await getUsers();
+      setUsers(users);
+    } catch (error) {
+      console.error("Failed to delete user:", error);
     }
   };
 
@@ -119,9 +130,11 @@ const UserList: React.FC = () => {
                 <Button
                   variant="outline-primary"
                   size="sm"
-                  onClick={() => navigator.clipboard.writeText(invitation.code)}
+                  onClick={() =>
+                    handleCopyInvitationCode(invitation._id, invitation.code)
+                  }
                 >
-                  Copy
+                  {isInvitationCopied[invitation._id] ? "Copied!" : "Copy"}
                 </Button>
                 <Button
                   variant="outline-danger"
