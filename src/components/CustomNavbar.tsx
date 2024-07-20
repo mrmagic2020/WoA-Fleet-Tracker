@@ -47,7 +47,7 @@ const CustomNavbar: React.FC = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="/">Dashboard</Nav.Link>
+            <Nav.Link href="/">Fleet</Nav.Link>
             {isAuthenticated && role === UserRole.Admin && (
               <Nav.Link href="/admin">Admin</Nav.Link>
             )}
