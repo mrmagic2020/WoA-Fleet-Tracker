@@ -19,6 +19,7 @@ interface AircraftListProps {
   setAircrafts: React.Dispatch<React.SetStateAction<IAircraft[]>>;
   readonly?: boolean;
   noDetails?: boolean;
+  inGroup?: boolean;
   shared?: boolean;
 }
 
@@ -27,6 +28,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
   setAircrafts,
   readonly = false,
   noDetails = false,
+  inGroup = false,
   shared = false
 }) => {
   const [isSellLoading, setIsSellLoading] = useState(false);
@@ -39,7 +41,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
   const [groups, setGroups] = useState<{ [key: string]: IAircraftGroup }>({});
 
   useEffect(() => {
-    if (shared) {
+    if (shared || inGroup) {
       return;
     }
     const fetchGroups = async () => {
@@ -106,7 +108,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
             <th>Status</th>
             {!shared && (
               <>
-                <th>Group</th>
+                {!inGroup && <th>Group</th>}
                 <th>Actions</th>
               </>
             )}
@@ -147,20 +149,22 @@ const AircraftList: React.FC<AircraftListProps> = ({
                   <Badge bg="secondary">{aircraft.status}</Badge>
                 </td>
               )}
-              <td>
-                {!shared && (
-                  <>
-                    {aircraft.aircraftGroup &&
-                    groups[aircraft.aircraftGroup as any] ? (
-                      <Link to={`/aircraftGroups/${aircraft.aircraftGroup}`}>
-                        {groups[aircraft.aircraftGroup as any].name}
-                      </Link>
-                    ) : (
-                      "None"
-                    )}
-                  </>
-                )}
-              </td>
+              {!inGroup && (
+                <td>
+                  {!shared && (
+                    <>
+                      {aircraft.aircraftGroup &&
+                      groups[aircraft.aircraftGroup as any] ? (
+                        <Link to={`/aircraftGroups/${aircraft.aircraftGroup}`}>
+                          {groups[aircraft.aircraftGroup as any].name}
+                        </Link>
+                      ) : (
+                        "None"
+                      )}
+                    </>
+                  )}
+                </td>
+              )}
               <td>
                 {!noDetails && (
                   <Link to={`/aircraft/${aircraft._id}`}>

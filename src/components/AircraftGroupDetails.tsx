@@ -70,6 +70,7 @@ const AircraftGroupDetails: React.FC = () => {
         aircrafts={aircrafts}
         setAircrafts={setAircrafts}
         readonly
+        inGroup
       />
     </Container>
   );
