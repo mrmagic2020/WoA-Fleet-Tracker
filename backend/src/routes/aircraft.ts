@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import { auth } from "../middleware/auth";
 import Aircraft from "../models/aircraft";
+import AircraftGroup from "../models/aircraftGroup";
 import { AircraftStatus, ContractType } from "@mrmagic2020/shared/dist/enums";
 
 const router = express.Router();
@@ -33,7 +34,8 @@ router.post("/", async (req: Request, res: Response) => {
     status: req.body.status,
     contracts: req.body.contracts,
     totalProfits: req.body.totalProfits,
-    user: (req.user as any).id
+    user: (req.user as any).id,
+    aircraftGroup: req.body.aircraftGroup ?? null
   });
 
   try {
@@ -46,9 +48,36 @@ router.post("/", async (req: Request, res: Response) => {
         .json({ message: "Registration code already exists" });
     }
     const newAircraft = await aircraft.save();
+    // Update the corresponding aircraft group, if any
+    if (newAircraft.aircraftGroup) {
+      await AircraftGroup.findByIdAndUpdate(
+        newAircraft.aircraftGroup,
+        {
+          $push: { aircrafts: newAircraft._id }
+        },
+        { new: true }
+      );
+    }
     res.status(201).json(newAircraft);
   } catch (err: any) {
     res.status(400).json({ message: err.message });
+  }
+});
+
+// PUT update an aircraft
+router.put("/:id", getAircraft, async (req: Request, res: Response) => {
+  try {
+    const newAircraft = await Aircraft.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!newAircraft) {
+      return res.status(404).json({ message: "Aircraft not found" });
+    }
+    res.json(newAircraft);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -72,6 +101,15 @@ router.put("/:id/sell", getAircraft, async (req: Request, res: Response) => {
 router.delete("/:id", getAircraft, async (req: Request, res: Response) => {
   try {
     await res.aircraft.deleteOne();
+    if (res.aircraft.aircraftGroup) {
+      await AircraftGroup.findByIdAndUpdate(
+        res.aircraft.aircraftGroup,
+        {
+          $pull: { aircrafts: res.aircraft._id }
+        },
+        { new: true }
+      );
+    }
     res.json({ message: "Deleted Aircraft" });
   } catch (err: any) {
     res.status(500).json({ message: err.message });

@@ -19,7 +19,8 @@ const Login: React.FC = () => {
   const { isAuthenticated, login: loginContext } = useAuth();
 
   if (isAuthenticated) {
-    navigate("/");
+    navigate(sessionStorage.getItem("redirectAfterAuth") || "/");
+    sessionStorage.removeItem("redirectAfterAuth");
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

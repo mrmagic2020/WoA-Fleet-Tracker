@@ -5,8 +5,14 @@ import {
   createContract,
   logProfit,
   finishContract,
-  deleteContract
+  deleteContract,
+  updateAircraft
 } from "../services/AircraftService";
+import {
+  getAircraftGroupById,
+  getAircraftGroups,
+  updateAircraftGroup
+} from "../services/AircraftGroupService";
 import {
   AircraftStatus,
   AirportCode,
@@ -14,7 +20,8 @@ import {
 } from "@mrmagic2020/shared/dist/enums";
 import {
   IAircraft,
-  IAircraftContract
+  IAircraftContract,
+  IAircraftGroup
 } from "@mrmagic2020/shared/dist/interfaces";
 import Breadcrumb from "react-bootstrap/Breadcrumb";
 import Container from "react-bootstrap/Container";
@@ -35,6 +42,12 @@ const AircraftDetails: React.FC = () => {
   const { id = "" } = useParams<{ id: string }>();
   const [aircraft, setAircraft]: [IAircraft, React.Dispatch<any>] =
     useState<any>(null);
+  const [aircraftGroupList, setAircraftGroupList] = useState<IAircraftGroup[]>(
+    []
+  );
+  const [aircraftGroup, setAircraftGroup] = useState<IAircraftGroup | null>(
+    null
+  );
   const [newContract, setNewContract] = useState({
     contractType: "",
     player: "",
@@ -54,9 +67,24 @@ const AircraftDetails: React.FC = () => {
       setAircraft(data);
       checkForActiveContract(data.contracts);
     };
+    const fetchAircraftGroupList = async () => {
+      const data = await getAircraftGroups();
+      setAircraftGroupList(data);
+    };
 
     fetchAircraft();
+    fetchAircraftGroupList();
   }, [id]);
+
+  useEffect(() => {
+    const fetchAircraftGroup = async () => {
+      if (!aircraft || !aircraft.aircraftGroup) return;
+      const data = await getAircraftGroupById(aircraft.aircraftGroup as any);
+      setAircraftGroup(data);
+    };
+
+    fetchAircraftGroup();
+  }, [aircraft]);
 
   const checkForActiveContract = (contracts: any[]) => {
     if (contracts.length === 0) {
@@ -65,6 +93,49 @@ const AircraftDetails: React.FC = () => {
     }
     const activeContract = contracts.some((contract) => !contract.finished);
     setHasActiveContract(activeContract);
+  };
+
+  const handleGroupChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newGroupId = e.target.value;
+    if (!aircraft) return;
+    const updatedAircraft = {
+      ...aircraft,
+      aircraftGroup: (newGroupId === "" ? null : newGroupId) as any
+    };
+    setAircraft(updatedAircraft);
+    await updateAircraft(id, { aircraftGroup: updatedAircraft.aircraftGroup });
+
+    // If the aircraft was previously in a group, remove it from that group
+    if (aircraft.aircraftGroup) {
+      const oldGroup = await getAircraftGroupById(
+        aircraft.aircraftGroup as any
+      );
+      const updatedOldGroup = {
+        ...oldGroup,
+        aircrafts: oldGroup.aircrafts.filter((ac) => ac !== (id as any))
+      };
+      await updateAircraftGroup(oldGroup._id, updatedOldGroup);
+    }
+
+    // If the aircraft is being moved to a group, add it to that group
+    if (newGroupId !== "") {
+      const newGroup = await getAircraftGroupById(newGroupId);
+      const updatedNewGroup = {
+        ...newGroup,
+        aircrafts: [...newGroup.aircrafts, id as any]
+      };
+      const finalNewGroup = await updateAircraftGroup(
+        newGroupId,
+        updatedNewGroup
+      );
+      setAircraftGroup(finalNewGroup);
+    } else {
+      setAircraftGroup(null);
+    }
+
+    // Fetch the aircraft data from the server again to get the updated group
+    const updatedAircraftData = await getAircraftById(id);
+    setAircraft(updatedAircraftData);
   };
 
   const handleInputChange = (
@@ -178,6 +249,23 @@ const AircraftDetails: React.FC = () => {
                 0
               )}
             />
+          </ListGroup.Item>
+          <ListGroup.Item>
+            Group:
+            <Form>
+              <Form.Select
+                name="aircraftGroup"
+                value={aircraftGroup?._id || ""}
+                onChange={handleGroupChange}
+              >
+                <option value="">None</option>
+                {aircraftGroupList.map((group) => (
+                  <option key={group._id} value={group._id}>
+                    {group.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form>
           </ListGroup.Item>
         </ListGroup>
       </Col>

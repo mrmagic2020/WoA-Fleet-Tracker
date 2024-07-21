@@ -167,6 +167,14 @@ export const createAircraft = async (aircraft: any) => {
   }
 };
 
+export const updateAircraft = async (
+  id: string,
+  aircraft: Partial<IAircraft>
+) => {
+  const response = await api.put(`/aircraft/${id}`, aircraft);
+  return response.data as IAircraft;
+};
+
 export const sellAircraft = async (id: string) => {
   const response = await api.put(`/aircraft/${id}/sell`);
   return response.data as IAircraft;

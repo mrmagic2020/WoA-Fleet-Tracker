@@ -1,4 +1,11 @@
-import { AircraftSize, AircraftStatus, AirportCode, ContractType } from "./enums";
+import {
+  AircraftGroupVisibility,
+  AircraftSize,
+  AircraftStatus,
+  AirportCode,
+  ContractType
+} from "./enums";
+import { Types, Document } from "mongoose";
 
 export interface IAircraftConfiguration {
   e: number;
@@ -7,7 +14,7 @@ export interface IAircraftConfiguration {
   cargo: number;
 }
 
-export interface IAircraftContract {
+export interface IAircraftContract extends Document {
   contractType: ContractType;
   player?: string;
   destination: string;
@@ -17,7 +24,7 @@ export interface IAircraftContract {
   _id: string;
 }
 
-export interface IAircraft {
+export interface IAircraft extends Document {
   ac_model: string;
   size: AircraftSize;
   type: string;
@@ -27,5 +34,16 @@ export interface IAircraft {
   status: AircraftStatus;
   totalProfits: number;
   contracts: IAircraftContract[];
+  aircraftGroup?: Types.ObjectId;
+  _id: IAircraftGroup["_id"];
+}
+
+export interface IAircraftGroup extends Document {
+  owner: Types.ObjectId;
+  name: string;
+  description: string;
+  colour: string;
+  visibility: AircraftGroupVisibility;
+  aircrafts: Types.ObjectId[];
   _id: string;
 }

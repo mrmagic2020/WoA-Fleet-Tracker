@@ -20,7 +20,8 @@ const Register: React.FC = () => {
   const { isAuthenticated, login: loginContext } = useAuth();
 
   if (isAuthenticated) {
-    navigate("/");
+    navigate(sessionStorage.getItem("redirectAfterAuth") || "/");
+    sessionStorage.removeItem("redirectAfterAuth");
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,7 +35,7 @@ const Register: React.FC = () => {
       );
       localStorage.setItem("token", token);
       loginContext(user);
-      navigate("/");
+      navigate(sessionStorage.getItem("redirectAfterAuth") || "/");
     } catch (err: any) {
       console.error("Failed to register", err);
       alert(`Registration failed: ${err.response.data.message}`);

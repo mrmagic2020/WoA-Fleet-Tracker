@@ -48,6 +48,9 @@ const CustomNavbar: React.FC = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             {isAuthenticated && <Nav.Link href="/">Fleet</Nav.Link>}
+            {isAuthenticated && (
+              <Nav.Link href="/aircraftGroups">Groups</Nav.Link>
+            )}
             {isAuthenticated && role === UserRole.Admin && (
               <Nav.Link href="/admin">Admin</Nav.Link>
             )}
@@ -60,16 +63,27 @@ const CustomNavbar: React.FC = () => {
             >
               GitHub
             </Nav.Link>
-            {isAuthenticated && (
-              <>
-                <NavDropdown title={username} id="user-actions-dropdown" className="ms-3">
-                  <NavDropdown.Item onClick={handleShowChangeUsername}>
-                    Change Username
-                  </NavDropdown.Item>
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
-                </NavDropdown>
-              </>
+            {isAuthenticated ? (
+              <NavDropdown
+                title={username}
+                id="user-actions-dropdown"
+                className="ms-3"
+              >
+                <NavDropdown.Item onClick={handleShowChangeUsername}>
+                  Change Username
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
+              </NavDropdown>
+            ) : (
+              <NavDropdown
+                title="Login"
+                id="account-dropdown"
+                className="ms-3"
+              >
+                <NavDropdown.Item href="/login">Login</NavDropdown.Item>
+                <NavDropdown.Item href="/register">Register</NavDropdown.Item>
+              </NavDropdown>
             )}
           </Nav>
         </Navbar.Collapse>

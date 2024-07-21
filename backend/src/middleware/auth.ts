@@ -35,6 +35,27 @@ export const auth = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+// Middleware to check if user is logged in
+export const optionalAuth = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const authHeader = req.header("Authorization");
+
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || "");
+      req.user = decoded;
+    } catch (err) {
+      return res.status(401).json({ message: "Token is not valid" });
+    }
+  }
+
+  next();
+};
+
 // Middleware to check if username is unique
 export const checkUniqueUsername = async (
   req: Request,

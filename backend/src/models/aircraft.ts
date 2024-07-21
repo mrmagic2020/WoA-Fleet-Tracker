@@ -1,19 +1,12 @@
-import mongoose, { Document, Schema } from "mongoose";
-import { AircraftSize, AircraftStatus, AircraftType, AirportCode, ContractType } from "@mrmagic2020/shared/dist/enums";
-import { IAircraftConfiguration, IAircraftContract } from "@mrmagic2020/shared/dist/interfaces";
-
-interface IAircraft extends Document {
-  user: mongoose.Types.ObjectId;
-  ac_model: string;
-  size: AircraftSize;
-  type: AircraftType;
-  registration: string;
-  configuration: IAircraftConfiguration;
-  airport: AirportCode;
-  status: AircraftStatus;
-  totalProfits: number;
-  contracts: IAircraftContract[];
-}
+import mongoose, { Schema } from "mongoose";
+import {
+  AircraftSize,
+  AircraftStatus,
+  AircraftType,
+  AirportCode,
+  ContractType
+} from "@mrmagic2020/shared/dist/enums";
+import { IAircraft } from "@mrmagic2020/shared/dist/interfaces";
 
 const aircraftSchema: Schema = new Schema({
   user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
@@ -43,7 +36,8 @@ const aircraftSchema: Schema = new Schema({
       progress: { type: Number, required: true },
       finished: { type: Boolean, required: true }
     }
-  ]
+  ],
+  aircraftGroup: { type: mongoose.Types.ObjectId, ref: "AircraftGroup" }
 });
 
 export default mongoose.model<IAircraft>("Aircraft", aircraftSchema);

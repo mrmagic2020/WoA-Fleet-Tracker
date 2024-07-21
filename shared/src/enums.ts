@@ -39,3 +39,9 @@ export enum UserRole {
   Admin = "Admin",
   User = "User"
 }
+
+export enum AircraftGroupVisibility {
+  Public = "Public",
+  Registered = "Registered Only",
+  Private = "Private"
+}

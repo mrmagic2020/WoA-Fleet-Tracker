@@ -16,18 +16,16 @@ import {
   AircraftType,
   AirportCode
 } from "@mrmagic2020/shared/dist/enums";
-import { IAircraft } from "@mrmagic2020/shared/dist/interfaces";
+import { IAircraft, IAircraftGroup } from "@mrmagic2020/shared/dist/interfaces";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
-import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import Badge from "react-bootstrap/Badge";
-import Currency from "./Currency";
-import Modal from "react-bootstrap/Modal";
+import AircraftList from "./AircraftList";
+import { getAircraftGroups } from "../services/AircraftGroupService";
 
 const FleetDashboard: React.FC = () => {
   const [sortBy, setSortBy] = useState(SortBy.None);
@@ -41,6 +39,7 @@ const FleetDashboard: React.FC = () => {
   const [filterValue, setFilterValue] = useState("");
 
   const [aircraft, setAircraft] = useState<IAircraft[]>([]);
+  const [aircraftGroups, setAircraftGroups] = useState<IAircraftGroup[]>([]);
   const [newAircraft, setNewAircraft] = useState({
     ac_model: "",
     size: "",
@@ -50,22 +49,25 @@ const FleetDashboard: React.FC = () => {
     airport: "",
     status: "Idle",
     totalProfits: 0,
-    contracts: []
+    contracts: [],
+    aircraftGroup: ""
   });
 
   const [isCreateLoading, setIsCreateLoading] = useState(false);
-  const [isSellLoading, setIsSellLoading] = useState(false);
-  const [isDeleteLoading, setIsDeleteLoading] = useState<{
-    [key: string]: boolean;
-  }>({});
-  const [showSellModal, setShowSellModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedAircraftId, setSelectedAircraftId] = useState("");
 
   const fetchAircraftWithSortAndFilter = async () => {
     const data = await getAircraft(sortBy, sortMode, filterBy, filterValue);
     setAircraft(data);
   };
+
+  const fetchAircraftGroups = async () => {
+    const data = await getAircraftGroups();
+    setAircraftGroups(data);
+  };
+
+  useEffect(() => {
+    fetchAircraftGroups();
+  }, []);
 
   useEffect(() => {
     fetchAircraftWithSortAndFilter();
@@ -141,35 +143,10 @@ const FleetDashboard: React.FC = () => {
         airport: "",
         status: "Idle",
         totalProfits: 0,
-        contracts: []
+        contracts: [],
+        aircraftGroup: ""
       });
       setIsCreateLoading(false);
-    }
-  };
-
-  const handleSellAircraft = async (id: string) => {
-    setIsSellLoading(true);
-    try {
-      await sellAircraft(id);
-      const data = await getAircraft();
-      setAircraft(data);
-    } catch (error: any) {
-      alert(`Failed to sell aircraft: ${error.message}`);
-    } finally {
-      setIsSellLoading(false);
-    }
-  };
-
-  const handleDeleteAircraft = async (id: string) => {
-    setIsDeleteLoading((prev) => ({ ...prev, [id]: true }));
-    try {
-      await deleteAircraft(id);
-      const data = await getAircraft();
-      setAircraft(data);
-    } catch (error: any) {
-      alert(`Failed to delete aircraft: ${error.message}`);
-    } finally {
-      setIsDeleteLoading((prev) => ({ ...prev, [id]: false }));
     }
   };
 
@@ -328,149 +305,8 @@ const FleetDashboard: React.FC = () => {
           </Col>
         </Row>
       </Form>
-      <Table striped hover>
-        <thead>
-          <tr>
-            <th>Model</th>
-            <th>Size</th>
-            <th>Type</th>
-            <th>Registration</th>
-            <th>Airport</th>
-            <th>Destination</th>
-            <th>Current Mean Profit</th>
-            <th>Total Profits</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {aircraft.map((aircraft, index) => (
-            <tr key={index}>
-              <td>{aircraft.ac_model}</td>
-              <td>{aircraft.size}</td>
-              <td>{aircraft.type}</td>
-              <td>{aircraft.registration}</td>
-              <td>{aircraft.airport}</td>
-              <td>{aircraft.contracts[0]?.destination}</td>
-              <td>
-                <Currency
-                  value={
-                    aircraft.contracts[0]?.profits.reduce((a, b) => a + b, 0) /
-                    aircraft.contracts[0]?.profits.length
-                  }
-                ></Currency>
-              </td>
-              <td>
-                <Currency value={aircraft.totalProfits} decimals={0}></Currency>
-              </td>
-              {aircraft.status === AircraftStatus.InService && (
-                <td>
-                  <Badge bg="success">{aircraft.status}</Badge>
-                </td>
-              )}
-              {aircraft.status === AircraftStatus.Idle && (
-                <td>
-                  <Badge bg="danger">{aircraft.status}</Badge>
-                </td>
-              )}
-              {aircraft.status === AircraftStatus.Sold && (
-                <td>
-                  <Badge bg="secondary">{aircraft.status}</Badge>
-                </td>
-              )}
-              <td>
-                <Link to={`/aircraft/${aircraft._id}`}>
-                  <Button
-                    variant="outline-info"
-                    size="sm"
-                    style={{ width: "4rem" }}
-                  >
-                    Details
-                  </Button>
-                </Link>
-                <Button
-                  variant="outline-warning"
-                  size="sm"
-                  className="ms-2"
-                  style={{ width: "4rem" }}
-                  disabled={aircraft.status === AircraftStatus.Sold}
-                  onClick={() => {
-                    setSelectedAircraftId(aircraft._id);
-                    setShowSellModal(true);
-                  }}
-                >
-                  {aircraft.status === AircraftStatus.Sold ? "Sold" : "Sell"}
-                </Button>
-                <Button
-                  variant="outline-danger"
-                  size="sm"
-                  className="ms-2"
-                  style={{ width: "4rem" }}
-                  onClick={() => {
-                    setSelectedAircraftId(aircraft._id);
-                    setShowDeleteModal(true);
-                  }}
-                >
-                  Delete
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
 
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Delete Aircraft</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this aircraft?</Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="outline-secondary"
-            onClick={() => setShowDeleteModal(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="outline-danger"
-            disabled={isDeleteLoading[selectedAircraftId]}
-            onClick={() => {
-              handleDeleteAircraft(selectedAircraftId);
-              setShowDeleteModal(false);
-            }}
-          >
-            {isDeleteLoading[selectedAircraftId] ? "Deleting..." : "Delete"}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={showSellModal} onHide={() => setShowSellModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Sell Aircraft</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to sell and archive this aircraft? This action
-          cannot be undone.
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="outline-secondary"
-            onClick={() => setShowSellModal(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="outline-warning"
-            disabled={isSellLoading}
-            onClick={() => {
-              handleSellAircraft(selectedAircraftId);
-              setShowSellModal(false);
-            }}
-          >
-            {isSellLoading ? "Selling..." : "Sell"}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <AircraftList aircrafts={aircraft} setAircrafts={setAircraft} />
 
       <Form
         onSubmit={(e) => {
@@ -526,6 +362,22 @@ const FleetDashboard: React.FC = () => {
               {Object.values(AirportCode).map((airport) => (
                 <option key={airport} value={airport}>
                   {airport}
+                </option>
+              ))}
+            </Form.Select>
+          </Col>
+          <Col xs="auto">
+            <Form.Select
+              name="aircraftGroup"
+              value={newAircraft.aircraftGroup}
+              onChange={handleAircraftInputChange}
+            >
+              <option value="" disabled>
+                Select Group
+              </option>
+              {aircraftGroups.map((group) => (
+                <option key={group._id} value={group._id}>
+                  {group.name}
                 </option>
               ))}
             </Form.Select>

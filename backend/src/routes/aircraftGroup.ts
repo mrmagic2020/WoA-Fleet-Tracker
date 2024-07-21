@@ -1,0 +1,80 @@
+import express from "express";
+import AircraftGroup from "../models/aircraftGroup";
+import { auth } from "../middleware/auth";
+
+const router = express.Router();
+
+// POST a new aircraft group (protected route)
+router.post("/", auth, async (req, res) => {
+  const { name, description, colour, visibility, aicrafts } = req.body;
+  const newGroup = new AircraftGroup({
+    name,
+    description,
+    colour,
+    visibility,
+    aicrafts,
+    owner: req.user.id
+  });
+
+  try {
+    const savedGroup = await newGroup.save();
+    res.status(201).json(savedGroup);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// GET all aircraft groups (protected route)
+router.get("/", auth, async (req, res) => {
+  try {
+    const groups = await AircraftGroup.find({});
+    res.status(200).json(groups);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// GET a single aircraft group (protected route)
+router.get("/:id", auth, async (req, res) => {
+  try {
+    const group = await AircraftGroup.findById(req.params.id);
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+    res.status(200).json(group);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// PUT update an aircraft group (protected route)
+router.put("/:id", auth, async (req, res) => {
+  try {
+    const group = await AircraftGroup.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+    res.status(200).json(group);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// DELETE an aircraft group (protected route)
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    const group = await AircraftGroup.findByIdAndDelete(req.params.id);
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+    res.json({ message: "Deleted Group" });
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+export default router;
