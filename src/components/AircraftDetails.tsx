@@ -189,9 +189,13 @@ const AircraftDetails: React.FC = () => {
 
   if (!aircraft) {
     return (
-      <Spinner animation="border" role="status">
-        <span className="visually-hidden">Loading...</span>
-      </Spinner>
+      <Container
+        fluid
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
+        <Spinner animation="border" />
+      </Container>
     );
   }
 
