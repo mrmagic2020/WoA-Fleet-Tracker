@@ -16,7 +16,7 @@ import Currency from "./Currency";
 
 interface AircraftContractListProps {
   contracts: IAircraftContract[];
-  handleLogProfit?: (contractId: string, newProfit: number) => void;
+  handleLogProfit?: (contractId: string, newProfit: number) => Promise<void>;
   handleFinishContract?: (contractId: string) => void;
   handleDeleteContract?: (contractId: string) => void;
   readonly?: boolean;
@@ -127,14 +127,17 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
                         <ListGroup.Item>
                           {!contract.finished && (
                             <Form
-                              onSubmit={(e) => {
+                              onSubmit={async (e) => {
                                 e.preventDefault();
                                 if (handleLogProfit) {
                                   setIsProfitLogging({
                                     ...isProfitLogging,
                                     [contract._id]: true
                                   });
-                                  handleLogProfit(contract._id, newProfit);
+                                  await handleLogProfit(
+                                    contract._id,
+                                    newProfit
+                                  );
                                   setNewProfit(NaN);
                                   setIsProfitLogging({
                                     ...isProfitLogging,
