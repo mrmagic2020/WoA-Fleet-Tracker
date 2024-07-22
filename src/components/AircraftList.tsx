@@ -93,7 +93,16 @@ const AircraftList: React.FC<AircraftListProps> = ({
 
   return (
     <>
-      <Table striped hover>
+      <Table
+        striped
+        hover
+        style={{
+          width: "100%",
+          whiteSpace: "nowrap",
+          display: "block",
+          overflowX: "auto"
+        }}
+      >
         <thead>
           <tr>
             <th>Model</th>
