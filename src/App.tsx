@@ -16,6 +16,7 @@ const AircraftGroupDetails = lazy(
 const Admin = lazy(() => import("./components/Admin"));
 import Container from "react-bootstrap/Container";
 import CustomNavbar from "./components/CustomNavbar";
+import CustomFooter from "./components/CustomFooter";
 
 const App: React.FC = () => {
   return (
@@ -54,6 +55,7 @@ const App: React.FC = () => {
             </Route>
           </Routes>
         </Suspense>
+        <CustomFooter />
       </Router>
     </AuthProvider>
   );
