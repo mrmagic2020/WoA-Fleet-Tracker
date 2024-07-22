@@ -3,6 +3,7 @@ import { IAircraft, IAircraftGroup } from "@mrmagic2020/shared/dist/interfaces";
 import { AircraftStatus } from "@mrmagic2020/shared/dist/enums";
 import { Link } from "react-router-dom";
 import Currency from "./Currency";
+import Container from "react-bootstrap/Container";
 import Table from "react-bootstrap/Table";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
@@ -92,17 +93,15 @@ const AircraftList: React.FC<AircraftListProps> = ({
   };
 
   return (
-    <>
-      <Table
-        striped
-        hover
-        style={{
-          width: "100%",
-          whiteSpace: "nowrap",
-          display: "block",
-          overflowX: "auto"
-        }}
-      >
+    <Container
+      fluid
+      style={{
+        width: "100%",
+        whiteSpace: "nowrap",
+        overflowX: "auto"
+      }}
+    >
+      <Table striped hover>
         <thead>
           <tr>
             <th>Model</th>
@@ -278,7 +277,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
           </Button>
         </Modal.Footer>
       </Modal>
-    </>
+    </Container>
   );
 };
 
