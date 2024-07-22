@@ -18,7 +18,6 @@ interface AircraftListProps {
   aircrafts: IAircraft[];
   setAircrafts: React.Dispatch<React.SetStateAction<IAircraft[]>>;
   readonly?: boolean;
-  noDetails?: boolean;
   inGroup?: boolean;
   shared?: boolean;
 }
@@ -27,7 +26,6 @@ const AircraftList: React.FC<AircraftListProps> = ({
   aircrafts,
   setAircrafts,
   readonly = false,
-  noDetails = false,
   inGroup = false,
   shared = false
 }) => {
@@ -106,12 +104,8 @@ const AircraftList: React.FC<AircraftListProps> = ({
             <th>Current Mean Profit</th>
             <th>Total Profits</th>
             <th>Status</th>
-            {!shared && (
-              <>
-                {!inGroup && <th>Group</th>}
-                <th>Actions</th>
-              </>
-            )}
+            {!inGroup && <th>Group</th>}
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -171,17 +165,21 @@ const AircraftList: React.FC<AircraftListProps> = ({
                 </td>
               )}
               <td>
-                {!noDetails && (
-                  <Link to={`/aircraft/${aircraft._id}`}>
-                    <Button
-                      variant="outline-info"
-                      size="sm"
-                      style={{ width: "4rem" }}
-                    >
-                      Details
-                    </Button>
-                  </Link>
-                )}
+                <Link
+                  to={
+                    shared
+                      ? `${window.location.href}/${aircraft._id}`
+                      : `/aircraft/${aircraft._id}`
+                  }
+                >
+                  <Button
+                    variant="outline-info"
+                    size="sm"
+                    style={{ width: "4rem" }}
+                  >
+                    Details
+                  </Button>
+                </Link>
                 {!readonly && (
                   <>
                     <Button

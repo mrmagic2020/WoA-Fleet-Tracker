@@ -1,5 +1,5 @@
 import api from "./api";
-import { IAircraftGroup } from "@mrmagic2020/shared/dist/interfaces";
+import { IAircraft, IAircraftGroup } from "@mrmagic2020/shared/dist/interfaces";
 
 export const getAircraftGroups = async (): Promise<IAircraftGroup[]> => {
   const response = await api.get("/aircraftGroup");
@@ -41,13 +41,24 @@ export const deleteAircraftGroup = async (id: string): Promise<void> => {
 
 /**
  * @important **The group returned has `aircrafts` populated.**
- * @param user 
- * @param groupId 
- * @returns 
+ * @param user
+ * @param groupId
+ * @returns
  */
 export const getSharedAircraftGroup = async (user: string, groupId: string) => {
   const response = await api.get<IAircraftGroup>(
     `/sharedGroups/${user}/${groupId}`
+  );
+  return response.data;
+};
+
+export const getSharedAircraft = async (
+  user: string,
+  groupId: string,
+  aircraftId: string
+) => {
+  const response = await api.get<IAircraft>(
+    `/sharedGroups/${user}/${groupId}/${aircraftId}`
   );
   return response.data;
 };

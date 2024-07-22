@@ -89,7 +89,7 @@ const SharedAircraftGroup: React.FC = () => {
         aircrafts={aircrafts}
         setAircrafts={() => {}}
         readonly
-        noDetails
+        inGroup
         shared
       />
     </Container>

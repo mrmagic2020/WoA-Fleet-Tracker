@@ -5,6 +5,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import SharedAircraftGroup from "./components/SharedAircraftGroup";
+import SharedAircraftDetails from "./components/SharedAircraftDetails";
 const FleetDashboard = lazy(() => import("./components/FleetDashboard"));
 const AircraftDetails = lazy(() => import("./components/AircraftDetails"));
 const AircraftGroupList = lazy(() => import("./components/AircraftGroupList"));
@@ -28,6 +29,10 @@ const App: React.FC = () => {
             <Route
               path="/sharedGroups/:user/:groupId"
               element={<SharedAircraftGroup />}
+            />
+            <Route
+              path="/sharedGroups/:user/:groupId/:aircraftId"
+              element={<SharedAircraftDetails />}
             />
             <Route path="/" element={<PrivateRoute />}>
               <Route path="/" element={<FleetDashboard />} />
