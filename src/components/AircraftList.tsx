@@ -87,6 +87,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
       alert(`Failed to delete aircraft: ${error.message}`);
     } finally {
       setIsDeleteLoading((prev) => ({ ...prev, [id]: false }));
+      setShowDeleteModal(false);
     }
   };
 
@@ -234,7 +235,6 @@ const AircraftList: React.FC<AircraftListProps> = ({
             disabled={isDeleteLoading[selectedAircraftId]}
             onClick={() => {
               handleDeleteAircraft(selectedAircraftId);
-              setShowDeleteModal(false);
             }}
           >
             {isDeleteLoading[selectedAircraftId] ? "Deleting..." : "Delete"}

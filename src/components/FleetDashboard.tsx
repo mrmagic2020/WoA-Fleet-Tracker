@@ -50,7 +50,7 @@ const FleetDashboard: React.FC = () => {
     status: "Idle",
     totalProfits: 0,
     contracts: [],
-    aircraftGroup: ""
+    aircraftGroup: "" as string | null
   });
 
   const [isCreateLoading, setIsCreateLoading] = useState(false);
@@ -123,7 +123,9 @@ const FleetDashboard: React.FC = () => {
   const handleCreateAircraft = async () => {
     setIsCreateLoading(true);
     try {
-      console.log(newAircraft);
+      if (newAircraft.aircraftGroup === "") {
+        newAircraft.aircraftGroup = null;
+      }
       await createAircraft(newAircraft);
       const data = await getAircraft();
       setAircraft(data);
@@ -369,12 +371,10 @@ const FleetDashboard: React.FC = () => {
           <Col xs="auto">
             <Form.Select
               name="aircraftGroup"
-              value={newAircraft.aircraftGroup}
+              value={newAircraft.aircraftGroup ?? ""}
               onChange={handleAircraftInputChange}
             >
-              <option value="" disabled>
-                Select Group
-              </option>
+              <option value={""}>None</option>
               {aircraftGroups.map((group) => (
                 <option key={group._id} value={group._id}>
                   {group.name}
