@@ -155,7 +155,12 @@ const AircraftList: React.FC<AircraftListProps> = ({
                     <>
                       {aircraft.aircraftGroup &&
                       groups[aircraft.aircraftGroup as any] ? (
-                        <Link to={`/aircraftGroups/${aircraft.aircraftGroup}`}>
+                        <Link
+                          to={`/aircraftGroups/${aircraft.aircraftGroup}`}
+                          style={{
+                            color: groups[aircraft.aircraftGroup as any].colour
+                          }}
+                        >
                           {groups[aircraft.aircraftGroup as any].name}
                         </Link>
                       ) : (

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import { getAircraftById } from "../services/AircraftService";
 import { getAircraftGroupById } from "../services/AircraftGroupService";
 import { AircraftGroupVisibility } from "@mrmagic2020/shared/dist/enums";
@@ -9,11 +10,14 @@ import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import AircraftList from "./AircraftList";
+import ShareGroupModal from "./ShareGroupModal";
 
 const AircraftGroupDetails: React.FC = () => {
+  const { username } = useAuth();
   const { id } = useParams<{ id: string }>();
   const [group, setGroup] = useState<IAircraftGroup | null>(null);
   const [aircrafts, setAircrafts] = useState<IAircraft[]>([]);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   useEffect(() => {
     const fetchGroup = async () => {
@@ -66,11 +70,22 @@ const AircraftGroupDetails: React.FC = () => {
       <Link to={`/aircraftGroups/edit/${group._id}`}>
         <Button variant="outline-primary">Edit Group</Button>
       </Link>
+      <Button variant="outline-info" className="ms-3" onClick={() => setShowShareModal(true)}>
+        Share Group
+      </Button>
       <AircraftList
         aircrafts={aircrafts}
         setAircrafts={setAircrafts}
         readonly
         inGroup
+      />
+
+      <ShareGroupModal
+        show={showShareModal}
+        setShow={setShowShareModal}
+        username={username}
+        groupName={group.name}
+        groupID={group._id}
       />
     </Container>
   );

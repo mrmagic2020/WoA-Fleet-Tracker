@@ -10,14 +10,12 @@ import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
 import Modal from "react-bootstrap/Modal";
-import FormControl from "react-bootstrap/FormControl";
-import InputGroup from "react-bootstrap/InputGroup";
+import ShareGroupModal from "./ShareGroupModal";
 
 const AircraftGroupList: React.FC = () => {
   const { username } = useAuth();
   const [groups, setGroups] = useState<IAircraftGroup[]>([]);
   const [sharingGroup, setSharingGroup] = useState<IAircraftGroup | null>(null);
-  const [isShareLinkCopied, setIsShareLinkCopied] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState("");
@@ -34,14 +32,6 @@ const AircraftGroupList: React.FC = () => {
   const handleShareGroup = async (group: IAircraftGroup) => {
     setShowShareModal(true);
     setSharingGroup(group);
-  };
-
-  const handleCopyShareLink = () => {
-    navigator.clipboard.writeText(
-      `${window.location.origin}/sharedGroups/${username}/${sharingGroup?._id}`
-    );
-    setIsShareLinkCopied(true);
-    setTimeout(() => setIsShareLinkCopied(false), 3000);
   };
 
   const handleDeleteGroup = async (id: string) => {
@@ -110,35 +100,13 @@ const AircraftGroupList: React.FC = () => {
         </tbody>
       </Table>
 
-      <Modal show={showShareModal} onHide={() => setShowShareModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Share Aircraft Group</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Share "{sharingGroup?.name}" with other people!
-          <InputGroup className="mt-3 mb-3">
-            <FormControl
-              value={`${window.location.origin}/sharedGroups/${username}/${sharingGroup?._id}`}
-              readOnly
-            />
-            <Button
-              variant="outline-secondary"
-              onClick={handleCopyShareLink}
-              disabled={isShareLinkCopied}
-            >
-              {isShareLinkCopied ? "Copied!" : "Copy"}
-            </Button>
-          </InputGroup>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="outline-primary"
-            onClick={() => setShowShareModal(false)}
-          >
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <ShareGroupModal
+        show={showShareModal}
+        setShow={setShowShareModal}
+        username={username}
+        groupName={sharingGroup?.name || ""}
+        groupID={sharingGroup?._id || ""}
+      />
 
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Header closeButton>
