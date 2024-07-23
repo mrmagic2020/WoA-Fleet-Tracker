@@ -8,9 +8,9 @@ import { IAircraftGroup, IAircraft } from "@mrmagic2020/shared/dist/interfaces";
 import Container from "react-bootstrap/Container";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
-import Spinner from "react-bootstrap/Spinner";
 import AircraftList from "./AircraftList";
 import ShareGroupModal from "./ShareGroupModal";
+import LoadingFallback from "./LoadingFallback";
 
 const AircraftGroupDetails: React.FC = () => {
   const { username } = useAuth();
@@ -33,13 +33,7 @@ const AircraftGroupDetails: React.FC = () => {
   }, [id]);
 
   if (!group) {
-    return (
-      <Container fluid>
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </Container>
-    );
+    return <LoadingFallback />;
   }
 
   return (
@@ -70,7 +64,11 @@ const AircraftGroupDetails: React.FC = () => {
       <Link to={`/aircraftGroups/edit/${group._id}`}>
         <Button variant="outline-primary">Edit Group</Button>
       </Link>
-      <Button variant="outline-info" className="ms-3" onClick={() => setShowShareModal(true)}>
+      <Button
+        variant="outline-info"
+        className="ms-3"
+        onClick={() => setShowShareModal(true)}
+      >
         Share Group
       </Button>
       <AircraftList

@@ -5,9 +5,9 @@ import { getSharedAircraft } from "../services/AircraftGroupService";
 import Alert from "react-bootstrap/Alert";
 import Breadcrumb from "react-bootstrap/Breadcrumb";
 import Container from "react-bootstrap/Container";
-import Spinner from "react-bootstrap/Spinner";
 import AircraftDetailsListGroup from "./AircraftDetailsListGroup";
 import AircraftContractList from "./AircraftContractList";
+import LoadingFallback from "./LoadingFallback";
 
 const SharedAircraftDetails: React.FC = () => {
   const { user, groupId, aircraftId } = useParams<{
@@ -39,15 +39,7 @@ const SharedAircraftDetails: React.FC = () => {
   }, [user, groupId, aircraftId]);
 
   if (loading) {
-    return (
-      <Container
-        fluid
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }}
-      >
-        <Spinner animation="border" />
-      </Container>
-    );
+    return <LoadingFallback />;
   }
 
   if (error) {

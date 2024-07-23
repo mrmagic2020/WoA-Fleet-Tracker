@@ -4,8 +4,12 @@ import { AuthProvider } from "./contexts/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import SharedAircraftGroup from "./components/SharedAircraftGroup";
-import SharedAircraftDetails from "./components/SharedAircraftDetails";
+const SharedAircraftGroup = lazy(
+  () => import("./components/SharedAircraftGroup")
+);
+const SharedAircraftDetails = lazy(
+  () => import("./components/SharedAircraftDetails")
+);
 const FleetDashboard = lazy(() => import("./components/FleetDashboard"));
 const AircraftDetails = lazy(() => import("./components/AircraftDetails"));
 const AircraftGroupList = lazy(() => import("./components/AircraftGroupList"));
@@ -14,7 +18,7 @@ const AircraftGroupDetails = lazy(
   () => import("./components/AircraftGroupDetails")
 );
 const Admin = lazy(() => import("./components/Admin"));
-import Container from "react-bootstrap/Container";
+import LoadingFallback from "./components/LoadingFallback";
 import CustomNavbar from "./components/CustomNavbar";
 import CustomFooter from "./components/CustomFooter";
 
@@ -23,7 +27,7 @@ const App: React.FC = () => {
     <AuthProvider>
       <Router>
         <CustomNavbar />
-        <Suspense fallback={<Container>Loading...</Container>}>
+        <Suspense fallback={<LoadingFallback />}>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

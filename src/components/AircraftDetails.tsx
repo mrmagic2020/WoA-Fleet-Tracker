@@ -18,11 +18,7 @@ import {
   AirportCode,
   ContractType
 } from "@mrmagic2020/shared/dist/enums";
-import {
-  IAircraft,
-  IAircraftContract,
-  IAircraftGroup
-} from "@mrmagic2020/shared/dist/interfaces";
+import { IAircraft, IAircraftGroup } from "@mrmagic2020/shared/dist/interfaces";
 import Breadcrumb from "react-bootstrap/Breadcrumb";
 import Container from "react-bootstrap/Container";
 import Alert from "react-bootstrap/Alert";
@@ -30,11 +26,9 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Spinner from "react-bootstrap/Spinner";
-import ListGroup from "react-bootstrap/ListGroup";
 import AircraftDetailsListGroup from "./AircraftDetailsListGroup";
 import AircraftContractList from "./AircraftContractList";
-import Currency from "./Currency";
+import LoadingFallback from "./LoadingFallback";
 
 const AircraftDetails: React.FC = () => {
   const { id = "" } = useParams<{ id: string }>();
@@ -188,15 +182,7 @@ const AircraftDetails: React.FC = () => {
   };
 
   if (!aircraft) {
-    return (
-      <Container
-        fluid
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }}
-      >
-        <Spinner animation="border" />
-      </Container>
-    );
+    return <LoadingFallback />;
   }
 
   return (

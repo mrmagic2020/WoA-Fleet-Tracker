@@ -5,9 +5,9 @@ import { getSharedAircraftGroup } from "../services/AircraftGroupService";
 import { IAircraft, IAircraftGroup } from "@mrmagic2020/shared/dist/interfaces";
 import AircraftList from "./AircraftList";
 import Container from "react-bootstrap/Container";
-import Spinner from "react-bootstrap/Spinner";
 import Alert from "react-bootstrap/Alert";
 import Badge from "react-bootstrap/Badge";
+import LoadingFallback from "./LoadingFallback";
 
 const SharedAircraftGroup: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -50,15 +50,7 @@ const SharedAircraftGroup: React.FC = () => {
   }, [user, groupId]);
 
   if (loading) {
-    return (
-      <Container
-        fluid
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }}
-      >
-        <Spinner animation="border" />
-      </Container>
-    );
+    return <LoadingFallback />;
   }
 
   if (error) {

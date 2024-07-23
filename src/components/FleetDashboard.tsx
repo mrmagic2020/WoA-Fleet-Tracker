@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   getAircraft,
   createAircraft,
-  deleteAircraft,
   SortBy,
   SortMode,
-  FilterBy,
-  sellAircraft
+  FilterBy
 } from "../services/AircraftService";
 import { aircraftTypes } from "../AircraftData";
 import {
