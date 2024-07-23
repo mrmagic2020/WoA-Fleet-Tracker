@@ -8,6 +8,7 @@ import Table from "react-bootstrap/Table";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import Spinner from "react-bootstrap/Spinner";
 import {
   deleteAircraft,
   getAircraft,
@@ -37,6 +38,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
   const [showSellModal, setShowSellModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedAircraftId, setSelectedAircraftId] = useState("");
+  const [areGroupsLoading, setAreGroupsLoading] = useState(true);
   const [groups, setGroups] = useState<{ [key: string]: IAircraftGroup }>({});
 
   useEffect(() => {
@@ -44,22 +46,30 @@ const AircraftList: React.FC<AircraftListProps> = ({
       return;
     }
     const fetchGroups = async () => {
-      const groupPromises = aircrafts.map(async (aircraft) => {
-        if (aircraft.aircraftGroup && !groups[aircraft.aircraftGroup as any]) {
-          const group = await getAircraftGroupById(
-            aircraft.aircraftGroup as any
-          );
-          return { [aircraft.aircraftGroup as any]: group };
-        }
-        return null;
-      });
+      try {
+        const groupPromises = aircrafts.map(async (aircraft) => {
+          if (
+            aircraft.aircraftGroup &&
+            !groups[aircraft.aircraftGroup as any]
+          ) {
+            const group = await getAircraftGroupById(
+              aircraft.aircraftGroup as any
+            );
+            return { [aircraft.aircraftGroup as any]: group };
+          }
+          return null;
+        });
+        const groupResults = await Promise.all(groupPromises);
+        const newGroups = groupResults
+          .filter((group) => group !== null)
+          .reduce((acc, group) => ({ ...acc, ...group }), {});
 
-      const groupResults = await Promise.all(groupPromises);
-      const newGroups = groupResults
-        .filter((group) => group !== null)
-        .reduce((acc, group) => ({ ...acc, ...group }), {});
-
-      setGroups((prevGroups) => ({ ...prevGroups, ...newGroups }));
+        setGroups((prevGroups) => ({ ...prevGroups, ...newGroups }));
+      } catch (error: any) {
+        alert(`Failed to fetch groups: ${error.message}`);
+      } finally {
+        setAreGroupsLoading(false);
+      }
     };
 
     fetchGroups();
@@ -156,18 +166,25 @@ const AircraftList: React.FC<AircraftListProps> = ({
                 <td>
                   {!shared && (
                     <>
-                      {aircraft.aircraftGroup &&
-                      groups[aircraft.aircraftGroup as any] ? (
-                        <Link
-                          to={`/aircraftGroups/${aircraft.aircraftGroup}`}
-                          style={{
-                            color: groups[aircraft.aircraftGroup as any].colour
-                          }}
-                        >
-                          {groups[aircraft.aircraftGroup as any].name}
-                        </Link>
+                      {areGroupsLoading ? (
+                        <Spinner animation="border" size="sm" />
                       ) : (
-                        "None"
+                        <>
+                          {aircraft.aircraftGroup &&
+                          groups[aircraft.aircraftGroup as any] ? (
+                            <Link
+                              to={`/aircraftGroups/${aircraft.aircraftGroup}`}
+                              style={{
+                                color:
+                                  groups[aircraft.aircraftGroup as any].colour
+                              }}
+                            >
+                              {groups[aircraft.aircraftGroup as any].name}
+                            </Link>
+                          ) : (
+                            "None"
+                          )}
+                        </>
                       )}
                     </>
                   )}
