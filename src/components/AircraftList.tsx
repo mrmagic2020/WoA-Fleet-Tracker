@@ -38,7 +38,6 @@ const AircraftList: React.FC<AircraftListProps> = ({
   const [showSellModal, setShowSellModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedAircraftId, setSelectedAircraftId] = useState("");
-  const [areGroupsLoading, setAreGroupsLoading] = useState(true);
   const [groups, setGroups] = useState<{ [key: string]: IAircraftGroup }>({});
 
   useEffect(() => {
@@ -67,8 +66,6 @@ const AircraftList: React.FC<AircraftListProps> = ({
         setGroups((prevGroups) => ({ ...prevGroups, ...newGroups }));
       } catch (error: any) {
         alert(`Failed to fetch groups: ${error.message}`);
-      } finally {
-        setAreGroupsLoading(false);
       }
     };
 
@@ -166,25 +163,21 @@ const AircraftList: React.FC<AircraftListProps> = ({
                 <td>
                   {!shared && (
                     <>
-                      {areGroupsLoading ? (
+                      {aircraft.aircraftGroup &&
+                      !groups[aircraft.aircraftGroup as any] ? (
                         <Spinner animation="border" size="sm" />
+                      ) : aircraft.aircraftGroup &&
+                        groups[aircraft.aircraftGroup as any] ? (
+                        <Link
+                          to={`/aircraftGroups/${aircraft.aircraftGroup}`}
+                          style={{
+                            color: groups[aircraft.aircraftGroup as any].colour
+                          }}
+                        >
+                          {groups[aircraft.aircraftGroup as any].name}
+                        </Link>
                       ) : (
-                        <>
-                          {aircraft.aircraftGroup &&
-                          groups[aircraft.aircraftGroup as any] ? (
-                            <Link
-                              to={`/aircraftGroups/${aircraft.aircraftGroup}`}
-                              style={{
-                                color:
-                                  groups[aircraft.aircraftGroup as any].colour
-                              }}
-                            >
-                              {groups[aircraft.aircraftGroup as any].name}
-                            </Link>
-                          ) : (
-                            "None"
-                          )}
-                        </>
+                        "None"
                       )}
                     </>
                   )}
