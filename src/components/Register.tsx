@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
+import { verifyReCAPTCHA } from "../services/ReCAPTCHAService";
 import { useNavigate } from "react-router-dom";
 import { register } from "../services/AuthService";
 import { useAuth } from "../contexts/AuthContext";
@@ -12,6 +14,10 @@ import { Link } from "react-router-dom";
 import "../styles/Register.css";
 
 const Register: React.FC = () => {
+  const recaptchaRef = React.createRef<ReCAPTCHA>();
+  const siteKey = process.env.RECAPTCHA_SITE_KEY;
+  const recaptchaAction = "Register";
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [invitationCode, setInvitationCode] = useState("");
@@ -28,6 +34,18 @@ const Register: React.FC = () => {
     e.preventDefault();
     setIsRegistering(true);
     try {
+      const recaptchaToken = await recaptchaRef.current?.executeAsync();
+      if (recaptchaToken) {
+        const recaptchaScore = await verifyReCAPTCHA(
+          recaptchaToken,
+          recaptchaAction
+        );
+        console.log(
+          `Frontend received reCAPTCHA score: ${JSON.stringify(recaptchaScore)}`
+        );
+      } else {
+        throw new Error("reCAPTCHA token is missing");
+      }
       const { token, user } = await register(
         username,
         password,
@@ -91,6 +109,13 @@ const Register: React.FC = () => {
                 onChange={(e) => setInvitationCode(e.target.value)}
               />
             </FloatingLabel>
+            {siteKey && (
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                size="invisible"
+                sitekey={siteKey}
+              />
+            )}
             <div className="d-flex justify-content-between align-items-center">
               <Link to="/login">Login</Link>
               <Button

@@ -132,3 +132,5 @@ dist
 .npmrc
 
 backend/client
+
+backend/google-credentials.json

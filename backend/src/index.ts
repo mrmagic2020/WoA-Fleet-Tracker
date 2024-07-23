@@ -3,15 +3,18 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
-import aircraftRoutes from "./routes/aircraft";
+import envSetup from "./envSetup";
+import recaptchaRoutes from "./routes/recaptcha";
 import authRoutes from "./routes/auth";
 import adminRoutes from "./routes/admin";
+import aircraftRoutes from "./routes/aircraft";
 import invitationRoutes from "./routes/invitation";
 import aircraftGroupRoutes from "./routes/aircraftGroup";
 import sharedGroupsRoutes from "./routes/sharedGroups";
 import { auth } from "./middleware/auth";
 
 dotenv.config();
+envSetup();
 
 const app = express();
 const port = process.env.PORT || 6060; // Backend port
@@ -27,6 +30,7 @@ mongoose
   .catch((err) => console.log("MongoDB connection error:", err));
 
 // Use routes
+app.use("/api", recaptchaRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/sharedGroups", sharedGroupsRoutes);
 app.use("/api/aircraft", auth, aircraftRoutes);

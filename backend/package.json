@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "nodemon src/index.ts",
+    "dev": "nodemon src/index.ts --ignore google-credentials.json",
     "build": "tsc"
   },
   "keywords": [],
@@ -12,6 +12,7 @@
   "license": "GPL-3.0-only",
   "description": "The backend project for the World of Airports fleet tracker.",
   "dependencies": {
+    "@google-cloud/recaptcha-enterprise": "^5.10.0",
     "@mrmagic2020/shared": "^1.0.17",
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
