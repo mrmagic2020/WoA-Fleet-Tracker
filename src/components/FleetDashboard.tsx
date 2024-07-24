@@ -24,16 +24,32 @@ import Row from "react-bootstrap/Row";
 import AircraftList from "./AircraftList";
 import { getAircraftGroups } from "../services/AircraftGroupService";
 
+const enum LocalStorageKey {
+  SortBy = "fleetDashboardSortBy",
+  SortMode = "fleetDashboardSortMode",
+  FilterBy = "fleetDashboardFilterBy",
+  FilterValue = "fleetDashboardFilterValue"
+}
+
 const FleetDashboard: React.FC = () => {
-  const [sortBy, setSortBy] = useState(SortBy.None);
-  const [sortMode, setSortMode] = useState(SortMode.Ascending);
+  const [sortBy, setSortBy] = useState(
+    (localStorage.getItem(LocalStorageKey.SortBy) as SortBy) || SortBy.None
+  );
+  const [sortMode, setSortMode] = useState(
+    localStorage.getItem(LocalStorageKey.SortMode) === "1" ? 1 : 0
+  );
   const sortModeRadios = [
     { name: "Ascending", value: SortMode.Ascending },
     { name: "Descending", value: SortMode.Descending }
   ];
 
-  const [filterBy, setFilterBy] = useState(FilterBy.None);
-  const [filterValue, setFilterValue] = useState("");
+  const [filterBy, setFilterBy] = useState(
+    (localStorage.getItem(LocalStorageKey.FilterBy) as FilterBy) ||
+      FilterBy.None
+  );
+  const [filterValue, setFilterValue] = useState(
+    localStorage.getItem(LocalStorageKey.FilterValue) || FilterBy.None
+  );
 
   const [aircraft, setAircraft] = useState<IAircraft[]>([]);
   const [aircraftGroups, setAircraftGroups] = useState<IAircraftGroup[]>([]);
@@ -72,14 +88,17 @@ const FleetDashboard: React.FC = () => {
 
   const handleSortByChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value as SortBy);
+    localStorage.setItem(LocalStorageKey.SortBy, e.target.value);
   };
 
   const handleSortModeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSortMode(parseInt(e.target.value));
+    localStorage.setItem(LocalStorageKey.SortMode, e.target.value);
   };
 
   const handleFilterByChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFilterBy(e.target.value as FilterBy);
+    localStorage.setItem(LocalStorageKey.FilterBy, e.target.value);
   };
 
   const handleFilterValueChange = (
@@ -88,6 +107,7 @@ const FleetDashboard: React.FC = () => {
     >
   ) => {
     setFilterValue(e.target.value);
+    localStorage.setItem(LocalStorageKey.FilterValue, e.target.value);
     fetchAircraftWithSortAndFilter();
   };
 
