@@ -43,6 +43,10 @@ const AircraftGroupList: React.FC = () => {
   return (
     <Container fluid>
       <h1 className="text-center">Aircraft Groups</h1>
+      <p className="text-center">
+        View and manage your aircraft groups. Share groups with other people so
+        they can view your fleet!
+      </p>
       <Link to="/aircraftGroups/new">
         <Button variant="outline-primary">Create New Group</Button>
       </Link>

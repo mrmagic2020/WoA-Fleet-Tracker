@@ -9,6 +9,7 @@ import { AircraftGroupVisibility } from "@mrmagic2020/shared/dist/enums";
 import { IAircraftGroup } from "@mrmagic2020/shared/dist/interfaces";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
+import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 
 const AircraftGroupForm: React.FC = () => {
@@ -107,6 +108,21 @@ const AircraftGroupForm: React.FC = () => {
             ))}
           </Form.Select>
         </Form.Group>
+        {group.visibility === AircraftGroupVisibility.Private && (
+          <Alert variant="success" className="mt-3">
+            This group is private and can only be viewed by you.
+          </Alert>
+        )}
+        {group.visibility === AircraftGroupVisibility.Registered && (
+          <Alert variant="warning" className="mt-3">
+            This group can be viewed by anyone with a WoA Fleet Tracker account.
+          </Alert>
+        )}
+        {group.visibility === AircraftGroupVisibility.Public && (
+          <Alert variant="danger" className="mt-3">
+            This group is public and can be viewed by anyone with a link.
+          </Alert>
+        )}
         <Button variant="outline-primary" type="submit" className="mt-3">
           {id ? "Update" : "Create"}
         </Button>
