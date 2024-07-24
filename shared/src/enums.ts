@@ -26,7 +26,8 @@ export enum AirportCode {
   MCT = "MCT",
   LEJ = "LEJ",
   SXM = "SXM",
-  LHR = "LHR"
+  LHR = "LHR",
+  SYD = "SYD"
 }
 
 export enum ContractType {
