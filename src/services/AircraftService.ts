@@ -1,3 +1,4 @@
+import { getAircraftGroupById } from "./AircraftGroupService";
 import api from "./api";
 import { IAircraft } from "@mrmagic2020/shared/dist/interfaces";
 
@@ -28,48 +29,48 @@ export enum FilterBy {
   Status = "status"
 }
 
-export const getAircraft = async (
-  sortBy: SortBy = SortBy.None,
-  sortMode: SortMode = SortMode.Ascending,
-  filterBy: FilterBy = FilterBy.None,
-  filterValue: string = ""
+const sortAndFilterAircraft = (
+  aircrafts: IAircraft[],
+  sortBy: SortBy,
+  sortMode: SortMode,
+  filterBy: FilterBy,
+  filterValue: string
 ) => {
-  const response = await api.get("/aircraft");
   switch (filterBy) {
     case FilterBy.Model:
-      response.data = response.data.filter((aircraft: IAircraft) =>
+      aircrafts = aircrafts.filter((aircraft: IAircraft) =>
         aircraft.ac_model.toLowerCase().includes(filterValue.toLowerCase())
       );
       break;
     case FilterBy.Size:
-      response.data = response.data.filter(
+      aircrafts = aircrafts.filter(
         (aircraft: IAircraft) => aircraft.size === filterValue
       );
       break;
     case FilterBy.Type:
-      response.data = response.data.filter((aircraft: IAircraft) =>
+      aircrafts = aircrafts.filter((aircraft: IAircraft) =>
         aircraft.type.toLowerCase().includes(filterValue.toLowerCase())
       );
       break;
     case FilterBy.Registration:
-      response.data = response.data.filter((aircraft: IAircraft) =>
+      aircrafts = aircrafts.filter((aircraft: IAircraft) =>
         aircraft.registration.toLowerCase().includes(filterValue.toLowerCase())
       );
       break;
     case FilterBy.Airport:
-      response.data = response.data.filter(
+      aircrafts = aircrafts.filter(
         (aircraft: IAircraft) => aircraft.airport === filterValue
       );
       break;
     case FilterBy.Destination:
-      response.data = response.data.filter((aircraft: IAircraft) =>
+      aircrafts = aircrafts.filter((aircraft: IAircraft) =>
         aircraft.contracts.some((contract) =>
           contract.destination.toLowerCase().includes(filterValue.toLowerCase())
         )
       );
       break;
     case FilterBy.Status:
-      response.data = response.data.filter((aircraft: IAircraft) =>
+      aircrafts = aircrafts.filter((aircraft: IAircraft) =>
         aircraft.status.toLowerCase().includes(filterValue.toLowerCase())
       );
       break;
@@ -78,7 +79,7 @@ export const getAircraft = async (
   }
   switch (sortBy) {
     case SortBy.Registration:
-      response.data.sort((a: IAircraft, b: IAircraft) => {
+      aircrafts.sort((a: IAircraft, b: IAircraft) => {
         if (sortMode === SortMode.Ascending) {
           return a.registration.localeCompare(b.registration);
         }
@@ -86,7 +87,7 @@ export const getAircraft = async (
       });
       break;
     case SortBy.Status:
-      response.data.sort((a: IAircraft, b: IAircraft) => {
+      aircrafts.sort((a: IAircraft, b: IAircraft) => {
         if (sortMode === SortMode.Ascending) {
           return a.status.localeCompare(b.status);
         }
@@ -94,7 +95,7 @@ export const getAircraft = async (
       });
       break;
     case SortBy.Airport:
-      response.data.sort((a: IAircraft, b: IAircraft) => {
+      aircrafts.sort((a: IAircraft, b: IAircraft) => {
         if (sortMode === SortMode.Ascending) {
           return a.airport.localeCompare(b.airport);
         }
@@ -102,7 +103,7 @@ export const getAircraft = async (
       });
       break;
     case SortBy.Type:
-      response.data.sort((a: IAircraft, b: IAircraft) => {
+      aircrafts.sort((a: IAircraft, b: IAircraft) => {
         if (sortMode === SortMode.Ascending) {
           return a.type.localeCompare(b.type);
         }
@@ -110,7 +111,7 @@ export const getAircraft = async (
       });
       break;
     case SortBy.Size:
-      response.data.sort((a: IAircraft, b: IAircraft) => {
+      aircrafts.sort((a: IAircraft, b: IAircraft) => {
         const sizeOrder = ["S", "M", "L", "X"];
         if (sortMode === SortMode.Ascending) {
           return sizeOrder.indexOf(a.size) - sizeOrder.indexOf(b.size);
@@ -119,7 +120,7 @@ export const getAircraft = async (
       });
       break;
     case SortBy.TotalProfits:
-      response.data.sort((a: IAircraft, b: IAircraft) => {
+      aircrafts.sort((a: IAircraft, b: IAircraft) => {
         if (sortMode === SortMode.Ascending) {
           return a.totalProfits - b.totalProfits;
         }
@@ -127,7 +128,7 @@ export const getAircraft = async (
       });
       break;
     case SortBy.CurrentMeanProfit:
-      response.data.sort((a: IAircraft, b: IAircraft) => {
+      aircrafts.sort((a: IAircraft, b: IAircraft) => {
         const aMeanProfit =
           a.contracts[0]?.profits.reduce((acc, profit) => acc + profit, 0) /
           a.contracts[0]?.profits.length;
@@ -143,7 +144,41 @@ export const getAircraft = async (
     default:
       break;
   }
-  return response.data as IAircraft[];
+};
+
+export const getAircraft = async (
+  sortBy: SortBy = SortBy.None,
+  sortMode: SortMode = SortMode.Ascending,
+  filterBy: FilterBy = FilterBy.None,
+  filterValue: string = ""
+) => {
+  const response = await api.get("/aircraft");
+  const aircrafts = response.data as IAircraft[];
+  sortAndFilterAircraft(aircrafts, sortBy, sortMode, filterBy, filterValue);
+  return aircrafts;
+};
+
+export const getAircraftsByGroup = async (
+  groupId: string,
+  sortBy: SortBy = SortBy.None,
+  sortMode: SortMode = SortMode.Ascending,
+  filterBy: FilterBy = FilterBy.None,
+  filterValue: string = ""
+) => {
+  try {
+    const group = await getAircraftGroupById(groupId);
+    const aircraftPromises = group.aircrafts.map((aircraftId) => {
+      return getAircraftById(aircraftId as any);
+    });
+    const aircrafts = await Promise.all(aircraftPromises);
+    sortAndFilterAircraft(aircrafts, sortBy, sortMode, filterBy, filterValue);
+    return aircrafts;
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data.message || error.message);
+    }
+    throw error;
+  }
 };
 
 export const getAircraftById = async (id: string) => {

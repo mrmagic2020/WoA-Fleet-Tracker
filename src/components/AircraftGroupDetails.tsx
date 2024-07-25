@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { getAircraftById } from "../services/AircraftService";
+import {
+  getAircraftById,
+  getAircraftsByGroup
+} from "../services/AircraftService";
 import { getAircraftGroupById } from "../services/AircraftGroupService";
 import { AircraftGroupVisibility } from "@mrmagic2020/shared/dist/enums";
 import { IAircraftGroup, IAircraft } from "@mrmagic2020/shared/dist/interfaces";
@@ -19,16 +22,14 @@ const AircraftGroupDetails: React.FC = () => {
   const [aircrafts, setAircrafts] = useState<IAircraft[]>([]);
   const [showShareModal, setShowShareModal] = useState(false);
 
+  const fetchGroup = async () => {
+    const data = await getAircraftGroupById(id!);
+    setGroup(data);
+    const aircraftsData = await getAircraftsByGroup(id!);
+    setAircrafts(aircraftsData);
+  };
+
   useEffect(() => {
-    const fetchGroup = async () => {
-      const data = await getAircraftGroupById(id!);
-      setGroup(data);
-      const aircraftPromises = data.aircrafts.map((aircraftId) =>
-        getAircraftById(aircraftId as any)
-      );
-      const aircraftsData = await Promise.all(aircraftPromises);
-      setAircrafts(aircraftsData);
-    };
     fetchGroup();
   }, [id]);
 
@@ -77,6 +78,7 @@ const AircraftGroupDetails: React.FC = () => {
         setAircrafts={setAircrafts}
         readonly
         inGroup
+        groupId={group._id}
       />
 
       <ShareGroupModal

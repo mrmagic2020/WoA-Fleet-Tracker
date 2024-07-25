@@ -24,6 +24,7 @@ import {
   deleteAircraft,
   FilterBy,
   getAircraft,
+  getAircraftsByGroup,
   sellAircraft,
   SortBy,
   SortMode
@@ -42,6 +43,7 @@ interface AircraftListProps {
   setAircrafts: React.Dispatch<React.SetStateAction<IAircraft[]>>;
   readonly?: boolean;
   inGroup?: boolean;
+  groupId?: string;
   shared?: boolean;
 }
 
@@ -50,8 +52,13 @@ const AircraftList: React.FC<AircraftListProps> = ({
   setAircrafts,
   readonly = false,
   inGroup = false,
+  groupId,
   shared = false
 }) => {
+  if (inGroup && !groupId) {
+    throw new Error("groupId is required when inGroup is true");
+  }
+
   const [sortBy, setSortBy] = useState(
     (localStorage.getItem(LocalStorageKey.SortBy) as SortBy) || SortBy.None
   );
@@ -81,7 +88,15 @@ const AircraftList: React.FC<AircraftListProps> = ({
   const [groups, setGroups] = useState<{ [key: string]: IAircraftGroup }>({});
 
   const fetchAircraftWithSortAndFilter = async () => {
-    const data = await getAircraft(sortBy, sortMode, filterBy, filterValue);
+    const data = inGroup
+      ? await getAircraftsByGroup(
+          groupId!,
+          sortBy,
+          sortMode,
+          filterBy,
+          filterValue
+        )
+      : await getAircraft(sortBy, sortMode, filterBy, filterValue);
     setAircrafts(data);
   };
 

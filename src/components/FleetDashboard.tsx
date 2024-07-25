@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  getAircraft,
-  createAircraft,
-  SortBy,
-  SortMode,
-  FilterBy
-} from "../services/AircraftService";
+import { getAircraft, createAircraft } from "../services/AircraftService";
 import { aircraftTypes } from "../AircraftData";
 import { AirportCode } from "@mrmagic2020/shared/dist/enums";
 import { IAircraft, IAircraftGroup } from "@mrmagic2020/shared/dist/interfaces";
