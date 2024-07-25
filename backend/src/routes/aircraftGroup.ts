@@ -1,4 +1,5 @@
 import express from "express";
+import Aircraft from "../models/aircraft";
 import AircraftGroup from "../models/aircraftGroup";
 import { auth } from "../middleware/auth";
 
@@ -71,6 +72,11 @@ router.delete("/:id", auth, async (req, res) => {
     if (!group) {
       return res.status(404).json({ message: "Group not found" });
     }
+    // Remove group from all aircrafts
+    await Aircraft.updateMany(
+      { aircraftGroup: req.params.id },
+      { $unset: { aircraftGroup: "" } }
+    );
     res.json({ message: "Deleted Group" });
   } catch (err: any) {
     res.status(400).json({ message: err.message });
