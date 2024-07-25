@@ -71,6 +71,7 @@ const AircraftGroupDetails: React.FC = () => {
       >
         Share Group
       </Button>
+      <h2 className="mt-3">Aircrafts</h2>
       <AircraftList
         aircrafts={aircrafts}
         setAircrafts={setAircrafts}
