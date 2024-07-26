@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useParams, useLocation } from "react-router-dom";
 import { getSharedAircraftGroup } from "../services/AircraftGroupService";
-import { IAircraft, IAircraftGroup } from "@mrmagic2020/shared/dist/interfaces";
+import {
+  IAircraft,
+  IPopulatedAircraftGroup
+} from "@mrmagic2020/shared/dist/interfaces";
 import AircraftList from "./AircraftList";
 import Container from "react-bootstrap/Container";
 import Alert from "react-bootstrap/Alert";
@@ -13,7 +16,7 @@ const SharedAircraftGroup: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
   const { user, groupId } = useParams<{ user: string; groupId: string }>();
-  const [group, setGroup] = useState<IAircraftGroup | null>(null);
+  const [group, setGroup] = useState<IPopulatedAircraftGroup | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showRegisterLink, setShowRegisterLink] = useState<boolean>(false);
@@ -35,7 +38,7 @@ const SharedAircraftGroup: React.FC = () => {
           return;
         }
         setGroup(data);
-        setAircrafts(data.aircrafts as any as IAircraft[]);
+        setAircrafts(data.aircrafts);
       } catch (err: any) {
         setError(err.response?.data?.message || "An error occurred");
         if (err.response?.status === 401) {
@@ -82,6 +85,7 @@ const SharedAircraftGroup: React.FC = () => {
         setAircrafts={() => {}}
         readonly
         inGroup
+        groupId={group._id}
         shared
       />
     </Container>
