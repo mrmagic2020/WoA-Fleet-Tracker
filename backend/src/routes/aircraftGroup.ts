@@ -2,6 +2,7 @@ import express from "express";
 import Aircraft from "../models/aircraft";
 import AircraftGroup from "../models/aircraftGroup";
 import { auth } from "../middleware/auth";
+import { Limits } from "@mrmagic2020/shared/dist/constants";
 
 const router = express.Router();
 
@@ -18,6 +19,14 @@ router.post("/", auth, async (req, res) => {
   });
 
   try {
+    const groupCount = await AircraftGroup.countDocuments({
+      owner: req.user.id
+    });
+    if (groupCount >= Limits.MaxAircraftGroups) {
+      return res.status(400).json({
+        message: `Aircraft group limit reached. Maximum ${Limits.MaxAircraftGroups} groups allowed`
+      });
+    }
     const savedGroup = await newGroup.save();
     res.status(201).json(savedGroup);
   } catch (err: any) {

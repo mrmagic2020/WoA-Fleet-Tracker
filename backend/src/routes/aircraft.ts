@@ -3,6 +3,7 @@ import { auth } from "../middleware/auth";
 import Aircraft from "../models/aircraft";
 import AircraftGroup from "../models/aircraftGroup";
 import { AircraftStatus, ContractType } from "@mrmagic2020/shared/dist/enums";
+import { Limits } from "@mrmagic2020/shared/dist/constants";
 
 const router = express.Router();
 router.use(auth);
@@ -39,6 +40,15 @@ router.post("/", async (req: Request, res: Response) => {
   });
 
   try {
+    // Check if aircraft limit is reached
+    const aircraftCount = await Aircraft.countDocuments({
+      user: (req.user as any).id
+    });
+    if (aircraftCount >= Limits.MaxAircrafts) {
+      return res.status(400).json({
+        message: `Aircraft limit reached. Maximum ${Limits.MaxAircrafts} aircrafts allowed`
+      });
+    }
     const existingAircraft = await Aircraft.findOne({
       registration: aircraft.registration
     });
@@ -141,6 +151,15 @@ router.post(
   getAircraft,
   async (req: Request, res: Response) => {
     const aircraft = res.aircraft;
+    const contractCount = aircraft.contracts.length;
+    if (contractCount >= Limits.MaxContractsPerAircraft) {
+      return res
+        .status(400)
+        .json({
+          message: `Maximum ${Limits.MaxContractsPerAircraft} contracts allowed per aircraft`
+        });
+    }
+
     const newContract = {
       contractType: req.body.contractType,
       player: req.body.player,
