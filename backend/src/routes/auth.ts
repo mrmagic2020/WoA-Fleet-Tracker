@@ -12,7 +12,18 @@ import {
 
 const router = express.Router();
 
-// Register a new user
+// GET check username availability
+router.get("/username/:username", async (req, res) => {
+  const { username } = req.params;
+  try {
+    const user = await User.findOne({ username });
+    res.json({ available: !user });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// POST Register a new user
 router.post(
   "/register",
   checkInvitationCode,

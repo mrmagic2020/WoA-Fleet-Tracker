@@ -28,6 +28,13 @@ api.interceptors.response.use(
   }
 );
 
+export const checkUsernameAvailability = async (
+  username: string
+): Promise<boolean> => {
+  const response = await api.get(`/auth/username/${username}`);
+  return response.data.available;
+};
+
 export const register = async (
   username: string,
   password: string,

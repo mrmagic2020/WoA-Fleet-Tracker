@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { siteKey, verifyReCAPTCHA } from "../services/ReCAPTCHAService";
 import { useNavigate } from "react-router-dom";
-import { register } from "../services/AuthService";
+import { register, checkUsernameAvailability } from "../services/AuthService";
 import { useAuth } from "../contexts/AuthContext";
 import Container from "react-bootstrap/Container";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
@@ -25,6 +25,27 @@ const RegisterSchema = Yup.object().shape({
       Limits.MaxUsernameLength,
       `Username must be at most ${Limits.MaxUsernameLength} characters`
     )
+    .test({
+      name: "username",
+      skipAbsent: true,
+      test: (value, ctx) => {
+        if (!value) {
+          return false;
+        }
+        return new Promise((resolve, reject) => {
+          checkUsernameAvailability(value)
+            .then((available) => {
+              if (!available) {
+                reject(ctx.createError({ message: "Username is taken" }));
+              }
+              resolve(true);
+            })
+            .catch((err) => {
+              reject(ctx.createError({ message: err.message }));
+            });
+        });
+      }
+    })
     .required("Username is required"),
   password: Yup.string()
     .min(
