@@ -31,7 +31,7 @@ api.interceptors.response.use(
 export const register = async (
   username: string,
   password: string,
-  invitationCode: string
+  invitationCode?: string
 ) => {
   const response = await api.post("/auth/register", {
     username,

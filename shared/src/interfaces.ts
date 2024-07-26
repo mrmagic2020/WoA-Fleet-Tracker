@@ -35,7 +35,11 @@ export interface IAircraft extends Document {
   totalProfits: number;
   contracts: IAircraftContract[];
   aircraftGroup?: Types.ObjectId;
-  _id: IAircraftGroup["_id"];
+  _id: string;
+}
+
+export interface IPopulatedAircraft extends Omit<IAircraft, "aircraftGroup"> {
+  aircraftGroup: IAircraftGroup;
 }
 
 export interface IAircraftGroup extends Document {
@@ -46,4 +50,9 @@ export interface IAircraftGroup extends Document {
   visibility: AircraftGroupVisibility;
   aircrafts: Types.ObjectId[];
   _id: string;
+}
+
+export interface IPopulatedAircraftGroup
+  extends Omit<IAircraftGroup, "aircrafts"> {
+  aircrafts: IAircraft[];
 }

@@ -33,15 +33,17 @@
     "webpack-dev-server": "^5.0.4"
   },
   "dependencies": {
-    "@mrmagic2020/shared": "^1.0.18",
+    "@mrmagic2020/shared": "^1.0.20",
     "@popperjs/core": "^2.11.8",
     "@types/react-bootstrap": "^0.32.37",
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
+    "formik": "^2.4.6",
     "react-bootstrap": "^2.10.4",
     "react-google-recaptcha": "^3.1.0",
     "react-router-dom": "^6.25.0",
-    "serve": "^14.2.3"
+    "serve": "^14.2.3",
+    "yup": "^1.4.0"
   },
   "proxy": "http://localhost:6060"
 }
