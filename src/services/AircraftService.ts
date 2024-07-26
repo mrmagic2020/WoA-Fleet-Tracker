@@ -144,6 +144,7 @@ const sortAndFilterAircraft = (
     default:
       break;
   }
+  return aircrafts;
 };
 
 export const getAircraft = async (
@@ -154,8 +155,14 @@ export const getAircraft = async (
 ) => {
   const response = await api.get("/aircraft");
   const aircrafts = response.data as IAircraft[];
-  sortAndFilterAircraft(aircrafts, sortBy, sortMode, filterBy, filterValue);
-  return aircrafts;
+  const processedAircrafts = sortAndFilterAircraft(
+    aircrafts,
+    sortBy,
+    sortMode,
+    filterBy,
+    filterValue
+  );
+  return processedAircrafts;
 };
 
 export const getAircraftsByGroup = async (
@@ -171,8 +178,14 @@ export const getAircraftsByGroup = async (
       return getAircraftById(aircraftId as any);
     });
     const aircrafts = await Promise.all(aircraftPromises);
-    sortAndFilterAircraft(aircrafts, sortBy, sortMode, filterBy, filterValue);
-    return aircrafts;
+    const processedAircrafts = sortAndFilterAircraft(
+      aircrafts,
+      sortBy,
+      sortMode,
+      filterBy,
+      filterValue
+    );
+    return processedAircrafts;
   } catch (error: any) {
     if (error.response) {
       throw new Error(error.response.data.message || error.message);
