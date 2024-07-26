@@ -81,7 +81,7 @@ const Register: React.FC = () => {
             validationSchema={RegisterSchema}
             onSubmit={handleSubmit}
           >
-            {({ handleSubmit, handleChange, values, touched, errors }) => (
+            {({ handleSubmit, touched, errors }) => (
               <FormikForm
                 noValidate
                 className="register-form"
