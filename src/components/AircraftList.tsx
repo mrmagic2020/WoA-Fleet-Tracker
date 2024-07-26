@@ -6,6 +6,16 @@ import {
   AircraftType,
   AirportCode
 } from "@mrmagic2020/shared/dist/enums";
+import {
+  deleteAircraft,
+  FilterBy,
+  getAircraft,
+  getAircraftsByGroup,
+  sellAircraft,
+  SortBy,
+  SortMode
+} from "../services/AircraftService";
+import { getAircraftGroupById } from "../services/AircraftGroupService";
 import { aircraftTypes } from "../AircraftData";
 import { Link } from "react-router-dom";
 import Currency from "./Currency";
@@ -20,16 +30,7 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
-import {
-  deleteAircraft,
-  FilterBy,
-  getAircraft,
-  getAircraftsByGroup,
-  sellAircraft,
-  SortBy,
-  SortMode
-} from "../services/AircraftService";
-import { getAircraftGroupById } from "../services/AircraftGroupService";
+import LoadingFallback from "./LoadingFallback";
 
 const enum LocalStorageKey {
   SortBy = "fleetDashboardSortBy",
@@ -187,6 +188,10 @@ const AircraftList: React.FC<AircraftListProps> = ({
       setShowDeleteModal(false);
     }
   };
+
+  if (!aircrafts) {
+    return <LoadingFallback />;
+  }
 
   return (
     <Container
