@@ -9,6 +9,15 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import { Formik, Field, Form as FormikForm, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import usernameSchema from "../YupSharedSchema/username";
+
+const userMetaSchema = Yup.object().shape({
+  username: usernameSchema
+});
+
+interface UserMetaFormValues extends Yup.InferType<typeof userMetaSchema> {}
 
 const CustomNavbar: React.FC = () => {
   const { isAuthenticated, username, role, logout } = useAuth();
@@ -17,17 +26,10 @@ const CustomNavbar: React.FC = () => {
   const handleShowChangeUsername = () => setShowChangeUsername(true);
   const handleCloseChangeUsername = () => setShowChangeUsername(false);
 
-  const [newUsername, setNewUsername] = useState("");
-  const handleNewUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewUsername(e.target.value);
-  };
-
-  const handleUsernameSumbit = async (e: React.FormEvent) => {
+  const handleUsernameSubmit = async (values: UserMetaFormValues) => {
     handleCloseChangeUsername();
-    e.preventDefault();
     try {
-      await updateUsername(newUsername);
-      setNewUsername("");
+      await updateUsername(values.username);
     } catch (err: any) {
       switch (err.response.status) {
         case 400:
@@ -76,11 +78,7 @@ const CustomNavbar: React.FC = () => {
                 <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
               </NavDropdown>
             ) : (
-              <NavDropdown
-                title="Login"
-                id="account-dropdown"
-                className="ms-3"
-              >
+              <NavDropdown title="Login" id="account-dropdown" className="ms-3">
                 <NavDropdown.Item href="/login">Login</NavDropdown.Item>
                 <NavDropdown.Item href="/register">Register</NavDropdown.Item>
               </NavDropdown>
@@ -94,33 +92,49 @@ const CustomNavbar: React.FC = () => {
           <Modal.Title>Change Username</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={handleUsernameSumbit}>
-            <Form.Group className="mb-3" controlId="formBasicUsername">
-              <Form.Label>New Username</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter new username"
-                value={newUsername}
-                onChange={handleNewUsernameChange}
-              />
-            </Form.Group>
-          </Form>
+          <Formik
+            initialValues={{ username: "" }}
+            validationSchema={userMetaSchema}
+            onSubmit={handleUsernameSubmit}
+          >
+            {({ handleSubmit, isSubmitting, touched, errors }) => (
+              <FormikForm noValidate onSubmit={handleSubmit}>
+                <Form.Group className="mb-3" controlId="formBasicUsername">
+                  <Form.Label>New Username</Form.Label>
+                  <Field
+                    type="text"
+                    name="username"
+                    placeholder="Enter new username"
+                    className={`form-control ${
+                      touched.username && errors.username ? "is-invalid" : ""
+                    }`}
+                  />
+                  <ErrorMessage
+                    name="username"
+                    component="div"
+                    className="invalid-feedback"
+                  />
+                </Form.Group>
+                <div className="d-flex justify-content-end">
+                  <Button
+                    variant="outline-secondary"
+                    onClick={handleCloseChangeUsername}
+                    className="me-2"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="outline-primary"
+                    type="submit"
+                    disabled={isSubmitting}
+                  >
+                    Save
+                  </Button>
+                </div>
+              </FormikForm>
+            )}
+          </Formik>
         </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="outline-secondary"
-            onClick={handleCloseChangeUsername}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="outline-primary"
-            type="submit"
-            onClick={handleUsernameSumbit}
-          >
-            Save
-          </Button>
-        </Modal.Footer>
       </Modal>
     </Container>
   );
