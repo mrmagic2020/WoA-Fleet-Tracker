@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { siteKey, verifyReCAPTCHA } from "../services/ReCAPTCHAService";
 import { useNavigate } from "react-router-dom";
-import { register, checkUsernameAvailability } from "../services/AuthService";
+import { register } from "../services/AuthService";
 import { useAuth } from "../contexts/AuthContext";
 import Container from "react-bootstrap/Container";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
@@ -10,71 +10,15 @@ import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { Link } from "react-router-dom";
-import { Limits } from "@mrmagic2020/shared/dist/constants";
 import { Formik, Field, Form as FormikForm, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import usernameSchema from "../YupSharedSchema/username";
+import passwordSchema from "../YupSharedSchema/password";
 import "../styles/Register.css";
 
 const RegisterSchema = Yup.object().shape({
-  username: Yup.string()
-    .min(
-      Limits.MinUsernameLength,
-      `Username must be at least ${Limits.MinUsernameLength} characters`
-    )
-    .max(
-      Limits.MaxUsernameLength,
-      `Username must be at most ${Limits.MaxUsernameLength} characters`
-    )
-    .test({
-      name: "username",
-      skipAbsent: true,
-      test: (value, ctx) => {
-        if (!value) {
-          return false;
-        }
-        return new Promise((resolve, reject) => {
-          checkUsernameAvailability(value)
-            .then((available) => {
-              if (!available) {
-                reject(ctx.createError({ message: "Username is taken" }));
-              }
-              resolve(true);
-            })
-            .catch((err) => {
-              reject(ctx.createError({ message: err.message }));
-            });
-        });
-      }
-    })
-    .required("Username is required"),
-  password: Yup.string()
-    .min(
-      Limits.MinPasswordLength,
-      `Password must be at least ${Limits.MinPasswordLength} characters`
-    )
-    .max(
-      Limits.MaxPasswordLength,
-      `Password must be at most ${Limits.MaxPasswordLength} characters`
-    )
-    .test({
-      name: "password",
-      skipAbsent: true,
-      test: (value, ctx) => {
-        if (!value) {
-          return false;
-        }
-        const hasLetter = /[a-zA-Z]/.test(value);
-        if (!hasLetter) {
-          return ctx.createError({ message: "Password must contain a letter" });
-        }
-        const hasNumber = /\d/.test(value);
-        if (!hasNumber) {
-          return ctx.createError({ message: "Password must contain a number" });
-        }
-        return true;
-      }
-    })
-    .required("Password is required"),
+  username: usernameSchema,
+  password: passwordSchema,
   invitationCode: Yup.string()
 });
 
