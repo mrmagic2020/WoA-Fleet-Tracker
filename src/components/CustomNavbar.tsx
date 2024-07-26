@@ -126,7 +126,7 @@ const CustomNavbar: React.FC = () => {
                   <Button
                     variant="outline-primary"
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || Object.keys(errors).length > 0}
                   >
                     Save
                   </Button>

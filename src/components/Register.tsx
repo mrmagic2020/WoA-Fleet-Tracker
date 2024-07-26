@@ -95,8 +95,8 @@ const Register: React.FC = () => {
                   className="mb-3"
                 >
                   <Field
-                    type="text"
                     name="username"
+                    type="text"
                     placeholder="Username"
                     autoComplete="off"
                     className={`form-control ${
@@ -115,8 +115,8 @@ const Register: React.FC = () => {
                   className="mb-3"
                 >
                   <Field
-                    type="password"
                     name="password"
+                    type="password"
                     placeholder="Password"
                     className={`form-control ${
                       touched.password && errors.password ? "is-invalid" : ""
@@ -134,8 +134,8 @@ const Register: React.FC = () => {
                   className="mb-3"
                 >
                   <Field
-                    type="text"
                     name="invitationCode"
+                    type="text"
                     placeholder="Invitation Code"
                     autoComplete="off"
                     className="form-control"
@@ -152,7 +152,7 @@ const Register: React.FC = () => {
                   <Link to="/login">Login</Link>
                   <Button
                     variant="outline-primary"
-                    disabled={isRegistering}
+                    disabled={isRegistering || Object.keys(errors).length > 0}
                     type="submit"
                   >
                     {isRegistering ? "Registering..." : "Register"}
