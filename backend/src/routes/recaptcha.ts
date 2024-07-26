@@ -6,7 +6,8 @@ dotenv.config();
 
 const projectID = "woa-fleet-tracke-1721716279617";
 const recaptchaKey = process.env.RECAPTCHA_SITE_KEY;
-async function verifyRecaptcha(token: string, action: string) {
+
+async function verifyRecaptcha(token: string, _action: string) {
   const client = new RecaptchaEnterpriseServiceClient();
   const projectPath = client.projectPath(projectID);
   const request = {
@@ -29,6 +30,11 @@ async function verifyRecaptcha(token: string, action: string) {
 }
 
 const router = Router();
+
+// GET reCAPTCHA site key
+router.get("/site-key", async (_req: Request, res: Response) => {
+  res.json({ siteKey: recaptchaKey });
+});
 
 // POST verify reCAPTCHA token
 router.post("/verify-recaptcha", async (req: Request, res: Response) => {

@@ -39,9 +39,6 @@ module.exports = {
     new webpack.DefinePlugin({
       "process.env.REACT_APP_API_BASE_URL": JSON.stringify(
         process.env.REACT_APP_API_BASE_URL
-      ),
-      "process.env.RECAPTCHA_SITE_KEY": JSON.stringify(
-        process.env.RECAPTCHA_SITE_KEY
       )
     })
   ],

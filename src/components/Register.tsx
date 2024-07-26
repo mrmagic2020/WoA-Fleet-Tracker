@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
-import { verifyReCAPTCHA } from "../services/ReCAPTCHAService";
+import { siteKey, verifyReCAPTCHA } from "../services/ReCAPTCHAService";
 import { useNavigate } from "react-router-dom";
 import { register } from "../services/AuthService";
 import { useAuth } from "../contexts/AuthContext";
@@ -8,7 +8,6 @@ import Container from "react-bootstrap/Container";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
-import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import { Link } from "react-router-dom";
 import { Limits } from "@mrmagic2020/shared/dist/constants";
@@ -62,7 +61,6 @@ interface RegisterFormValues extends Yup.InferType<typeof RegisterSchema> {}
 
 const Register: React.FC = () => {
   const recaptchaRef = React.createRef<ReCAPTCHA>();
-  const siteKey = process.env.RECAPTCHA_SITE_KEY;
   const recaptchaAction = "Register";
 
   const [isRegistering, setIsRegistering] = useState(false);

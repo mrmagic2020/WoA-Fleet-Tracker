@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { initReCAPTCHASiteKey } from "./services/ReCAPTCHAService";
 import PrivateRoute from "./components/PrivateRoute";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -23,6 +24,7 @@ import CustomNavbar from "./components/CustomNavbar";
 import CustomFooter from "./components/CustomFooter";
 
 const App: React.FC = () => {
+  initReCAPTCHASiteKey();
   return (
     <AuthProvider>
       <Router>
