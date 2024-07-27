@@ -30,6 +30,7 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
+import Pagination from "react-bootstrap/Pagination";
 import LoadingFallback from "./LoadingFallback";
 
 const enum LocalStorageKey {
@@ -59,6 +60,9 @@ const AircraftList: React.FC<AircraftListProps> = ({
   if (inGroup && !groupId) {
     throw new Error("groupId is required when inGroup is true");
   }
+
+  const [activePage, setActivePage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const [sortBy, setSortBy] = useState(
     (localStorage.getItem(LocalStorageKey.SortBy) as SortBy) || SortBy.None
@@ -193,6 +197,11 @@ const AircraftList: React.FC<AircraftListProps> = ({
     return <LoadingFallback />;
   }
 
+  const indexOfLastItem = activePage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentAircrafts = aircrafts.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(aircrafts.length / itemsPerPage);
+
   return (
     <Container
       fluid
@@ -204,8 +213,10 @@ const AircraftList: React.FC<AircraftListProps> = ({
     >
       <Form>
         <Row>
-          <Col xs="auto">
-            <Form.Label htmlFor="sortBy">Sort by</Form.Label>
+          <Col xs="auto" className="d-flex align-items-center">
+            <Form.Label htmlFor="sortBy" className="mb-0">
+              Sort by
+            </Form.Label>
           </Col>
           <Col xs="auto">
             <Form.Select
@@ -242,8 +253,10 @@ const AircraftList: React.FC<AircraftListProps> = ({
           </Col>
         </Row>
         <Row>
-          <Col xs="auto">
-            <Form.Label htmlFor="filterBy">Filter by</Form.Label>
+          <Col xs="auto" className="d-flex align-items-center">
+            <Form.Label htmlFor="filterBy" className="mb-0">
+              Filter by
+            </Form.Label>
           </Col>
           <Col xs="auto">
             <Form.Select
@@ -351,6 +364,22 @@ const AircraftList: React.FC<AircraftListProps> = ({
               </Form.Select>
             )}
           </Col>
+          <Col xs="auto" className="d-flex align-items-center ms-auto">
+            <Form.Label htmlFor="itemsPerPage" className="me-2 mb-0">
+              Items per page
+            </Form.Label>
+            <Form.Select
+              size="sm"
+              id="itemsPerPage"
+              value={itemsPerPage}
+              onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
+            >
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </Form.Select>
+          </Col>
         </Row>
       </Form>
       <Table striped hover>
@@ -370,7 +399,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
           </tr>
         </thead>
         <tbody>
-          {aircrafts.map((aircraft, index) => (
+          {currentAircrafts.map((aircraft, index) => (
             <tr key={index}>
               <td>{aircraft.ac_model}</td>
               <td>{aircraft.size}</td>
@@ -480,6 +509,35 @@ const AircraftList: React.FC<AircraftListProps> = ({
           ))}
         </tbody>
       </Table>
+      <Container className="d-flex justify-content-center">
+        <Pagination>
+          <Pagination.First
+            onClick={() => setActivePage(1)}
+            disabled={activePage === 1}
+          />
+          <Pagination.Prev
+            onClick={() => setActivePage((prev) => prev - 1)}
+            disabled={activePage === 1}
+          />
+          {Array.from({ length: totalPages }).map((_, index) => (
+            <Pagination.Item
+              key={index}
+              active={index + 1 === activePage}
+              onClick={() => setActivePage(index + 1)}
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            onClick={() => setActivePage((prev) => prev + 1)}
+            disabled={activePage === totalPages}
+          />
+          <Pagination.Last
+            onClick={() => setActivePage(totalPages)}
+            disabled={activePage === totalPages}
+          />
+        </Pagination>
+      </Container>
 
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Header closeButton>
