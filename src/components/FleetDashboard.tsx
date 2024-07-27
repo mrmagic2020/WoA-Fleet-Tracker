@@ -91,12 +91,13 @@ const FleetDashboard: React.FC = () => {
           <FormikForm noValidate>
             <Row>
               <Col xs="auto">
-                <Field
-                  as="select"
+                <Form.Select
                   name="ac_model"
                   className={`form-control ${
                     touched.ac_model && errors.ac_model ? "is-invalid" : ""
                   }`}
+                  value={values.ac_model}
+                  onChange={handleChange}
                   required
                 >
                   <option value="" disabled>
@@ -107,7 +108,7 @@ const FleetDashboard: React.FC = () => {
                       {type.Aircraft}
                     </option>
                   ))}
-                </Field>
+                </Form.Select>
                 <ErrorMessage
                   name="ac_model"
                   component="div"
