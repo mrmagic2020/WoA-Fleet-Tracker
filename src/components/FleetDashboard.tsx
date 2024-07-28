@@ -161,9 +161,10 @@ const FleetDashboard: React.FC = () => {
                 />
               </Col>
               <Col xs="auto">
-                <Field
-                  as="select"
+                <Form.Select
                   name="airport"
+                  value={values.airport}
+                  onChange={handleChange}
                   className={`form-control ${
                     touched.airport && errors.airport ? "is-invalid" : ""
                   }`}
@@ -177,7 +178,7 @@ const FleetDashboard: React.FC = () => {
                       {airport}
                     </option>
                   ))}
-                </Field>
+                </Form.Select>
                 <ErrorMessage
                   name="airport"
                   component="div"
@@ -185,9 +186,10 @@ const FleetDashboard: React.FC = () => {
                 />
               </Col>
               <Col xs="auto">
-                <Field
-                  as="select"
+                <Form.Select
                   name="aircraftGroup"
+                  value={values.aircraftGroup}
+                  onChange={handleChange}
                   className={`form-control ${
                     touched.aircraftGroup && errors.aircraftGroup
                       ? "is-invalid"
@@ -200,7 +202,7 @@ const FleetDashboard: React.FC = () => {
                       {group.name}
                     </option>
                   ))}
-                </Field>
+                </Form.Select>
                 <ErrorMessage
                   name="aircraftGroup"
                   component="div"
