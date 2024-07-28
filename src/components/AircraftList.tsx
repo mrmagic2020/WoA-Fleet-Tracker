@@ -33,7 +33,9 @@ import Spinner from "react-bootstrap/Spinner";
 import Pagination from "react-bootstrap/Pagination";
 import LoadingFallback from "./LoadingFallback";
 
-const enum LocalStorageKey {
+const enum SessionStorageKey {
+  ItemsPerPage = "fleetDashboardItemsPerPage",
+  ActivePage = "fleetDashboardActivePage",
   SortBy = "fleetDashboardSortBy",
   SortMode = "fleetDashboardSortMode",
   FilterBy = "fleetDashboardFilterBy",
@@ -61,14 +63,32 @@ const AircraftList: React.FC<AircraftListProps> = ({
     throw new Error("groupId is required when inGroup is true");
   }
 
-  const [activePage, setActivePage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [activePage, setActivePage] = useState(
+    sessionStorage.getItem(SessionStorageKey.ActivePage)
+      ? parseInt(sessionStorage.getItem(SessionStorageKey.ActivePage)!)
+      : 1
+  );
+  const [itemsPerPage, setItemsPerPage] = useState(
+    parseInt(sessionStorage.getItem(SessionStorageKey.ItemsPerPage) || "10", 10)
+  );
+
+  const handleActivePageChange = (page: number) => {
+    setActivePage(page);
+    sessionStorage.setItem(SessionStorageKey.ActivePage, page.toString());
+  };
+
+  const handleItemsPerPageChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setItemsPerPage(parseInt(e.target.value));
+    sessionStorage.setItem(SessionStorageKey.ItemsPerPage, e.target.value);
+  };
 
   const [sortBy, setSortBy] = useState(
-    (localStorage.getItem(LocalStorageKey.SortBy) as SortBy) || SortBy.None
+    (sessionStorage.getItem(SessionStorageKey.SortBy) as SortBy) || SortBy.None
   );
   const [sortMode, setSortMode] = useState(
-    localStorage.getItem(LocalStorageKey.SortMode) === "1" ? 1 : 0
+    sessionStorage.getItem(SessionStorageKey.SortMode) === "1" ? 1 : 0
   );
   const sortModeRadios = [
     { name: "Ascending", value: SortMode.Ascending },
@@ -76,11 +96,11 @@ const AircraftList: React.FC<AircraftListProps> = ({
   ];
 
   const [filterBy, setFilterBy] = useState(
-    (localStorage.getItem(LocalStorageKey.FilterBy) as FilterBy) ||
+    (sessionStorage.getItem(SessionStorageKey.FilterBy) as FilterBy) ||
       FilterBy.None
   );
   const [filterValue, setFilterValue] = useState(
-    localStorage.getItem(LocalStorageKey.FilterValue) || FilterBy.None
+    sessionStorage.getItem(SessionStorageKey.FilterValue) || FilterBy.None
   );
 
   const [isSellLoading, setIsSellLoading] = useState(false);
@@ -111,17 +131,17 @@ const AircraftList: React.FC<AircraftListProps> = ({
 
   const handleSortByChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value as SortBy);
-    localStorage.setItem(LocalStorageKey.SortBy, e.target.value);
+    sessionStorage.setItem(SessionStorageKey.SortBy, e.target.value);
   };
 
   const handleSortModeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSortMode(parseInt(e.target.value));
-    localStorage.setItem(LocalStorageKey.SortMode, e.target.value);
+    sessionStorage.setItem(SessionStorageKey.SortMode, e.target.value);
   };
 
   const handleFilterByChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFilterBy(e.target.value as FilterBy);
-    localStorage.setItem(LocalStorageKey.FilterBy, e.target.value);
+    sessionStorage.setItem(SessionStorageKey.FilterBy, e.target.value);
   };
 
   const handleFilterValueChange = (
@@ -130,7 +150,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
     >
   ) => {
     setFilterValue(e.target.value);
-    localStorage.setItem(LocalStorageKey.FilterValue, e.target.value);
+    sessionStorage.setItem(SessionStorageKey.FilterValue, e.target.value);
     fetchAircraftWithSortAndFilter();
   };
 
@@ -372,7 +392,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
               size="sm"
               id="itemsPerPage"
               value={itemsPerPage}
-              onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
+              onChange={handleItemsPerPageChange}
             >
               <option value="10">10</option>
               <option value="25">25</option>
@@ -512,28 +532,28 @@ const AircraftList: React.FC<AircraftListProps> = ({
       <Container className="d-flex justify-content-center">
         <Pagination>
           <Pagination.First
-            onClick={() => setActivePage(1)}
+            onClick={handleActivePageChange.bind(null, 1)}
             disabled={activePage === 1}
           />
           <Pagination.Prev
-            onClick={() => setActivePage((prev) => prev - 1)}
+            onClick={handleActivePageChange.bind(null, activePage - 1)}
             disabled={activePage === 1}
           />
           {Array.from({ length: totalPages }).map((_, index) => (
             <Pagination.Item
               key={index}
               active={index + 1 === activePage}
-              onClick={() => setActivePage(index + 1)}
+              onClick={handleActivePageChange.bind(null, index + 1)}
             >
               {index + 1}
             </Pagination.Item>
           ))}
           <Pagination.Next
-            onClick={() => setActivePage((prev) => prev + 1)}
+            onClick={handleActivePageChange.bind(null, activePage + 1)}
             disabled={activePage === totalPages}
           />
           <Pagination.Last
-            onClick={() => setActivePage(totalPages)}
+            onClick={handleActivePageChange.bind(null, totalPages)}
             disabled={activePage === totalPages}
           />
         </Pagination>
