@@ -4,6 +4,8 @@ import { siteKey, verifyReCAPTCHA } from "../services/ReCAPTCHAService";
 import { useNavigate } from "react-router-dom";
 import { register } from "../services/AuthService";
 import { useAuth } from "../contexts/AuthContext";
+import { getRandomBackgroundImage } from "../assets/BackgroundImage";
+import ImageCredit from "./ImageCredit";
 import Container from "react-bootstrap/Container";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Button from "react-bootstrap/Button";
@@ -25,6 +27,8 @@ const RegisterSchema = Yup.object().shape({
 interface RegisterFormValues extends Yup.InferType<typeof RegisterSchema> {}
 
 const Register: React.FC = () => {
+  const [backgroundImage] = useState(getRandomBackgroundImage());
+
   const recaptchaRef = React.createRef<ReCAPTCHA>();
   const recaptchaAction = "Register";
 
@@ -75,7 +79,13 @@ const Register: React.FC = () => {
   };
 
   return (
-    <Container fluid className="register-container">
+    <Container
+      fluid
+      className="register-container"
+      style={{
+        backgroundImage: `url(${backgroundImage.path})`
+      }}
+    >
       <Row className="min-vh-100">
         <Col xs={12} md={6} lg={4}>
           <Formik
@@ -164,6 +174,7 @@ const Register: React.FC = () => {
                     {isRegistering ? "Registering..." : "Register"}
                   </Button>
                 </div>
+                <ImageCredit {...backgroundImage} />
               </FormikForm>
             )}
           </Formik>
