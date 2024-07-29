@@ -18,7 +18,7 @@ const usernameSchema = Yup.string()
       if (!value) {
         return false;
       }
-      const isUsernameValid = /^[a-zA-Z0-9_]*$/.test(value);
+      const isUsernameValid = /^[a-zA-Z0-9_ ]*$/.test(value);
       if (!isUsernameValid) {
         return ctx.createError({
           message: "Username can only contain letters, numbers, and underscores"
