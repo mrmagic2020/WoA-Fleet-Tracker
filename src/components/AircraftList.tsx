@@ -154,38 +154,6 @@ const AircraftList: React.FC<AircraftListProps> = ({
     fetchAircraftWithSortAndFilter();
   };
 
-  useEffect(() => {
-    if (shared || inGroup) {
-      return;
-    }
-    const fetchGroups = async () => {
-      try {
-        const groupPromises = aircrafts.map(async (aircraft) => {
-          if (
-            aircraft.aircraftGroup &&
-            !groups[aircraft.aircraftGroup as any]
-          ) {
-            const group = await getAircraftGroupById(
-              aircraft.aircraftGroup as any
-            );
-            return { [aircraft.aircraftGroup as any]: group };
-          }
-          return null;
-        });
-        const groupResults = await Promise.all(groupPromises);
-        const newGroups = groupResults
-          .filter((group) => group !== null)
-          .reduce((acc, group) => ({ ...acc, ...group }), {});
-
-        setGroups((prevGroups) => ({ ...prevGroups, ...newGroups }));
-      } catch (error: any) {
-        alert(`Failed to fetch groups: ${error.message}`);
-      }
-    };
-
-    fetchGroups();
-  }, [aircrafts]);
-
   const handleSellAircraft = async (id: string) => {
     setIsSellLoading(true);
     try {
@@ -221,6 +189,39 @@ const AircraftList: React.FC<AircraftListProps> = ({
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentAircrafts = aircrafts.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(aircrafts.length / itemsPerPage);
+
+  useEffect(() => {
+    if (shared || inGroup) {
+      return;
+    }
+    const fetchGroups = async () => {
+      try {
+        // Only fetch groups for currently displayed aircrafts
+        const groupPromises = currentAircrafts.map(async (aircraft) => {
+          if (
+            aircraft.aircraftGroup &&
+            !groups[aircraft.aircraftGroup as any]
+          ) {
+            const group = await getAircraftGroupById(
+              aircraft.aircraftGroup as any
+            );
+            return { [aircraft.aircraftGroup as any]: group };
+          }
+          return null;
+        });
+        const groupResults = await Promise.all(groupPromises);
+        const newGroups = groupResults
+          .filter((group) => group !== null)
+          .reduce((acc, group) => ({ ...acc, ...group }), {});
+
+        setGroups((prevGroups) => ({ ...prevGroups, ...newGroups }));
+      } catch (error: any) {
+        alert(`Failed to fetch groups: ${error.message}`);
+      }
+    };
+
+    fetchGroups();
+  }, [aircrafts]);
 
   return (
     <Container
