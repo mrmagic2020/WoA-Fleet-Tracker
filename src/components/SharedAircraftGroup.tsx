@@ -52,6 +52,10 @@ const SharedAircraftGroup: React.FC = () => {
     fetchGroup();
   }, [user, groupId]);
 
+  useEffect(() => {
+    document.title = `WoA Fleet Tracker - ${user}'s ${group?.name}`;
+  }, [user, group]);
+
   if (loading) {
     return <LoadingFallback />;
   }
@@ -73,7 +77,6 @@ const SharedAircraftGroup: React.FC = () => {
   if (!group) {
     return null;
   }
-
   return (
     <Container fluid>
       <h1>
@@ -82,7 +85,7 @@ const SharedAircraftGroup: React.FC = () => {
       <p>{group.description}</p>
       <AircraftList
         aircrafts={aircrafts}
-        setAircrafts={() => {}}
+        setAircrafts={setAircrafts}
         readonly
         inGroup
         groupId={group._id}

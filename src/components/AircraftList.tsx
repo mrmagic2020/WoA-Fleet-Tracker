@@ -116,20 +116,19 @@ const AircraftList: React.FC<AircraftListProps> = ({
   const [selectedAircraftId, setSelectedAircraftId] = useState("");
   const [groups, setGroups] = useState<{ [key: string]: IAircraftGroup }>({});
 
-  const fetchAircraftWithSortAndFilter = async () => {
-    const data = inGroup
-      ? await getAircraftsByGroup(
-          groupId!,
-          sortBy,
-          sortMode,
-          filterBy,
-          filterValue
-        )
-      : await getAircraft(sortBy, sortMode, filterBy, filterValue);
-    setAircrafts(data);
-  };
-
   useEffect(() => {
+    const fetchAircraftWithSortAndFilter = async () => {
+      const data = inGroup
+        ? await getAircraftsByGroup(
+            groupId!,
+            sortBy,
+            sortMode,
+            filterBy,
+            filterValue
+          )
+        : await getAircraft(sortBy, sortMode, filterBy, filterValue);
+      setAircrafts(data);
+    };
     fetchAircraftWithSortAndFilter();
   }, [sortBy, sortMode, filterBy, filterValue]);
 
@@ -155,7 +154,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
   ) => {
     setFilterValue(e.target.value);
     sessionStorage.setItem(SessionStorageKey.FilterValue, e.target.value);
-    fetchAircraftWithSortAndFilter();
+    // fetchAircraftWithSortAndFilter();
   };
 
   const handleSellAircraft = async (id: string) => {
