@@ -82,6 +82,10 @@ const AircraftList: React.FC<AircraftListProps> = ({
   ) => {
     setItemsPerPage(parseInt(e.target.value));
     sessionStorage.setItem(SessionStorageKey.ItemsPerPage, e.target.value);
+    if (activePage > Math.ceil(aircrafts.length / parseInt(e.target.value))) {
+      setActivePage(1);
+      sessionStorage.setItem(SessionStorageKey.ActivePage, "1");
+    }
   };
 
   const [sortBy, setSortBy] = useState(
@@ -196,7 +200,6 @@ const AircraftList: React.FC<AircraftListProps> = ({
     }
     const fetchGroups = async () => {
       try {
-        // Only fetch groups for currently displayed aircrafts
         const groupPromises = currentAircrafts.map(async (aircraft) => {
           if (
             aircraft.aircraftGroup &&
@@ -221,7 +224,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
     };
 
     fetchGroups();
-  }, [aircrafts]);
+  }, [activePage, itemsPerPage, aircrafts]);
 
   return (
     <Container
@@ -395,6 +398,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
               value={itemsPerPage}
               onChange={handleItemsPerPageChange}
             >
+              <option value="5">5</option>
               <option value="10">10</option>
               <option value="25">25</option>
               <option value="50">50</option>
