@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { siteKey, verifyReCAPTCHA } from "../services/ReCAPTCHAService";
 import { useNavigate } from "react-router-dom";
@@ -32,10 +32,16 @@ const Register: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated, login: loginContext } = useAuth();
 
-  if (isAuthenticated) {
-    navigate(sessionStorage.getItem("redirectAfterAuth") || "/");
-    sessionStorage.removeItem("redirectAfterAuth");
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(sessionStorage.getItem("redirectAfterAuth") || "/");
+      sessionStorage.removeItem("redirectAfterAuth");
+    }
+  }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    document.title = "WoA Fleet Tracker - Register";
+  }, []);
 
   const handleSubmit = async (values: RegisterFormValues) => {
     setIsRegistering(true);

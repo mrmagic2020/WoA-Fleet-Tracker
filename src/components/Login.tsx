@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../services/AuthService";
 import { useAuth } from "../contexts/AuthContext";
@@ -25,10 +25,16 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated, login: loginContext } = useAuth();
 
-  if (isAuthenticated) {
-    navigate(sessionStorage.getItem("redirectAfterAuth") || "/");
-    sessionStorage.removeItem("redirectAfterAuth");
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(sessionStorage.getItem("redirectAfterAuth") || "/");
+      sessionStorage.removeItem("redirectAfterAuth");
+    }
+  }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    document.title = "WoA Fleet Tracker - Login";
+  }, []);
 
   const handleSubmit = async (values: LoginFormValues) => {
     setIsLoggingIn(true);
