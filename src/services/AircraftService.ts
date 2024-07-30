@@ -1,4 +1,7 @@
-import { getAircraftGroupById } from "./AircraftGroupService";
+import {
+  getSharedAircraft,
+  getSharedAircraftGroup
+} from "./AircraftGroupService";
 import api from "./api";
 import { IAircraft } from "@mrmagic2020/shared/dist/interfaces";
 
@@ -166,6 +169,7 @@ export const getAircraft = async (
 };
 
 export const getAircraftsByGroup = async (
+  user: string,
   groupId: string,
   sortBy: SortBy = SortBy.None,
   sortMode: SortMode = SortMode.Ascending,
@@ -173,11 +177,8 @@ export const getAircraftsByGroup = async (
   filterValue: string = ""
 ) => {
   try {
-    const group = await getAircraftGroupById(groupId);
-    const aircraftPromises = group.aircrafts.map((aircraftId) => {
-      return getAircraftById(aircraftId as any);
-    });
-    const aircrafts = await Promise.all(aircraftPromises);
+    const group = await getSharedAircraftGroup(user, groupId);
+    const aircrafts = group.aircrafts; // Since the group is populated
     const processedAircrafts = sortAndFilterAircraft(
       aircrafts,
       sortBy,

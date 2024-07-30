@@ -22,7 +22,7 @@ api.interceptors.response.use(
       !originalRequest.url.includes("/sharedGroups")
     ) {
       localStorage.removeItem("token");
-      window.location.href = "/login";
+      // window.location.href = "/login";
     }
     return Promise.reject(error);
   }

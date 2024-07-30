@@ -25,7 +25,7 @@ const AircraftGroupDetails: React.FC = () => {
   const fetchGroup = async () => {
     const data = await getAircraftGroupById(id!);
     setGroup(data);
-    const aircraftsData = await getAircraftsByGroup(id!);
+    const aircraftsData = await getAircraftsByGroup(username, id!);
     setAircrafts(aircraftsData);
   };
 
@@ -79,6 +79,7 @@ const AircraftGroupDetails: React.FC = () => {
         readonly
         inGroup
         groupId={group._id}
+        user={username}
       />
 
       <ShareGroupModal

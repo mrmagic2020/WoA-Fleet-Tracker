@@ -89,6 +89,7 @@ const SharedAircraftGroup: React.FC = () => {
         readonly
         inGroup
         groupId={group._id}
+        user={user}
         shared
       />
     </Container>

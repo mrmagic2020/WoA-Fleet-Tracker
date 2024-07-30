@@ -48,6 +48,7 @@ interface AircraftListProps {
   readonly?: boolean;
   inGroup?: boolean;
   groupId?: string;
+  user?: string;
   shared?: boolean;
 }
 
@@ -57,10 +58,11 @@ const AircraftList: React.FC<AircraftListProps> = ({
   readonly = false,
   inGroup = false,
   groupId,
+  user,
   shared = false
 }) => {
-  if (inGroup && !groupId) {
-    throw new Error("groupId is required when inGroup is true");
+  if (inGroup && (!groupId || !user)) {
+    throw new Error("groupId and user is required when inGroup is true");
   }
 
   const [activePage, setActivePage] = useState(
@@ -120,6 +122,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
     const fetchAircraftWithSortAndFilter = async () => {
       const data = inGroup
         ? await getAircraftsByGroup(
+            user!,
             groupId!,
             sortBy,
             sortMode,
