@@ -43,6 +43,7 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
   }>({});
   const [deletingContract, setDeletingContract] =
     useState<IAircraftContract | null>(null);
+  const [showFinishModal, setShowFinishModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   return (
@@ -196,9 +197,7 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
                                   variant="outline-success"
                                   size="sm"
                                   onClick={() => {
-                                    if (handleFinishContract) {
-                                      handleFinishContract(contract._id);
-                                    }
+                                    setShowFinishModal(true);
                                   }}
                                 >
                                   Finish Contract
@@ -219,6 +218,41 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
                             </Col>
                           </Row>
                         </ListGroup.Item>
+
+                        <Modal
+                          show={showFinishModal}
+                          onHide={() => setShowFinishModal(false)}
+                        >
+                          <Modal.Header closeButton>
+                            <Modal.Title>Finish Contract</Modal.Title>
+                          </Modal.Header>
+                          <Modal.Body>
+                            <p>
+                              Are you sure you want to finish this contract?
+                              This action cannot be undone.
+                            </p>
+                          </Modal.Body>
+                          <Modal.Footer>
+                            <Button
+                              variant="secondary"
+                              onClick={() => setShowFinishModal(false)}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              variant="success"
+                              onClick={() => {
+                                if (handleFinishContract) {
+                                  handleFinishContract(contract._id);
+                                }
+                                setShowFinishModal(false);
+                              }}
+                            >
+                              Finish
+                            </Button>
+                          </Modal.Footer>
+                        </Modal>
+
                         <Modal
                           show={showDeleteModal}
                           onHide={() => setShowDeleteModal(false)}
