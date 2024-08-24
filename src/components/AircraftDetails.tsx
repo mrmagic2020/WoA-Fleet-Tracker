@@ -46,6 +46,7 @@ const AircraftDetails: React.FC = () => {
     destination: ""
   });
   const [hasActiveContract, setHasActiveContract] = useState(false);
+  const [isContractCreateLoading, setIsContractCreateLoading] = useState(false);
 
   useEffect(() => {
     const fetchAircraft = async () => {
@@ -135,6 +136,7 @@ const AircraftDetails: React.FC = () => {
 
   const handleCreateContract = async () => {
     if (!aircraft || hasActiveContract) return;
+    setIsContractCreateLoading(true);
     const updatedAircraft = await createContract(id, newContract);
     newContract.contractType = "";
     newContract.player = "";
@@ -150,6 +152,7 @@ const AircraftDetails: React.FC = () => {
     }
     setAircraft(updatedAircraft);
     checkForActiveContract(updatedAircraft.contracts);
+    setIsContractCreateLoading(false);
   };
 
   const handleLogProfit = async (contractId: string, newProfit: number) => {
@@ -308,7 +311,7 @@ const AircraftDetails: React.FC = () => {
                   type="submit"
                   disabled={hasActiveContract}
                 >
-                  Create Contract
+                  {isContractCreateLoading ? "Creating..." : "Create Contract"}
                 </Button>
               </Col>
             </Row>
