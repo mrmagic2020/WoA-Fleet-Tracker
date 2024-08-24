@@ -36,7 +36,7 @@
     "@mrmagic2020/shared": "^1.0.20",
     "@popperjs/core": "^2.11.8",
     "@types/react-bootstrap": "^0.32.37",
-    "axios": "^1.7.2",
+    "axios": "^1.7.5",
     "bootstrap": "^5.3.3",
     "formik": "^2.4.6",
     "react-bootstrap": "^2.10.4",
