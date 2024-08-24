@@ -14,6 +14,8 @@
   { "Aircraft": "CRJ7", "Size": "S", "Type": "PAX" },
   { "Aircraft": "E170", "Size": "S", "Type": "PAX" },
   { "Aircraft": "DH64", "Size": "M", "Type": "PAX" },
+  { "Aircraft": "DH8B", "Size": "S", "Type": "PAX" },
+  { "Aircraft": "DH8C", "Size": "S", "Type": "PAX" },
   { "Aircraft": "DH8D", "Size": "S", "Type": "PAX" },
   { "Aircraft": "E175", "Size": "S", "Type": "PAX" },
   { "Aircraft": "CRJ9", "Size": "S", "Type": "PAX" },
