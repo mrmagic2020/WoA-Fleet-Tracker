@@ -64,7 +64,11 @@ const AircraftGroupList: React.FC = () => {
           {groups.map((group, index) => (
             <tr key={index}>
               <td>{group.name}</td>
-              <td>{group.description}</td>
+              <td>
+                {group.description.length > 100
+                  ? `${group.description.substring(0, 100)}...`
+                  : group.description}
+              </td>
               <td style={{ backgroundColor: group.colour }}>{group.colour}</td>
               <td>{group.visibility}</td>
               <td>

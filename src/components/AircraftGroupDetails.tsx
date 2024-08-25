@@ -57,7 +57,7 @@ const AircraftGroupDetails: React.FC = () => {
           </Badge>
         )}
       </h1>
-      <p>{group.description}</p>
+      <span style={{ whiteSpace: "pre-line" }}>{group.description}</span>
       <p>
         Colour:{" "}
         <span style={{ backgroundColor: group.colour }}>{group.colour}</span>
