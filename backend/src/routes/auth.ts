@@ -70,7 +70,7 @@ router.post("/login", async (req, res) => {
     { id: user._id },
     process.env.JWT_SECRET ?? "defaultSecret",
     {
-      expiresIn: "1h"
+      expiresIn: "3d"
     }
   );
   res.json({ token, user: { username: user.username, role: user.role } });
