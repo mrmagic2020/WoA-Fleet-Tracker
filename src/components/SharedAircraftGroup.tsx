@@ -82,7 +82,7 @@ const SharedAircraftGroup: React.FC = () => {
       <h1>
         {group.name} <Badge bg="info">{user}</Badge>
       </h1>
-      <p>{group.description}</p>
+      <span style={{ whiteSpace: "pre-line" }}>{group.description}</span>
       <AircraftList
         aircrafts={aircrafts}
         setAircrafts={setAircrafts}
