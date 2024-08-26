@@ -148,6 +148,27 @@ const AircraftList: React.FC<AircraftListProps> = ({
   const handleFilterByChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFilterBy(e.target.value as FilterBy);
     sessionStorage.setItem(SessionStorageKey.FilterBy, e.target.value);
+    // Reset filter value when filter by changes
+    switch (e.target.value) {
+      case FilterBy.Model:
+        setFilterValue(aircraftTypes[0].Aircraft);
+        break;
+      case FilterBy.Size:
+        setFilterValue(AircraftSize.Small);
+        break;
+      case FilterBy.Type:
+        setFilterValue(AircraftType.PAX);
+        break;
+      case FilterBy.Airport:
+        setFilterValue(AirportCode.INN);
+        break;
+      case FilterBy.Status:
+        setFilterValue(AircraftStatus.Idle);
+        break;
+      default:
+        setFilterValue("");
+        break;
+    }
   };
 
   const handleFilterValueChange = (
@@ -164,7 +185,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
     setIsSellLoading(true);
     try {
       await sellAircraft(id);
-      const data = await getAircraft();
+      const data = await getAircraft(sortBy, sortMode, filterBy, filterValue);
       setAircrafts(data);
     } catch (error: any) {
       alert(`Failed to sell aircraft: ${error.message}`);
@@ -177,7 +198,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
     setIsDeleteLoading((prev) => ({ ...prev, [id]: true }));
     try {
       await deleteAircraft(id);
-      const data = await getAircraft();
+      const data = await getAircraft(sortBy, sortMode, filterBy, filterValue);
       setAircrafts(data);
     } catch (error: any) {
       alert(`Failed to delete aircraft: ${error.message}`);

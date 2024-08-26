@@ -60,6 +60,7 @@ const FleetDashboard: React.FC = () => {
       const data = await getAircraft();
       setAircraft(data);
       resetForm();
+      window.location.reload(); // Refresh the page to update the aircraft list sorting & filtering
     } catch (error: any) {
       if (error.message === "Aircraft already exists") {
         alert("Failed to create aircraft: Aircraft already exists");
