@@ -557,6 +557,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
           ))}
         </tbody>
       </Table>
+      {aircrafts.length === 0 && <span>No aircrafts found.</span>}
       <Container className="d-flex justify-content-center">
         <Pagination>
           <Pagination.First

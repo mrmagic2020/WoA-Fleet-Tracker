@@ -91,6 +91,11 @@ const FleetDashboard: React.FC = () => {
         {({ values, handleChange, isSubmitting, touched, errors }) => (
           <FormikForm noValidate>
             <Row>
+              <Col>
+                <h4 className="mb-2">Create Aircraft</h4>
+              </Col>
+            </Row>
+            <Row>
               <Col xs="auto">
                 <Form.Select
                   name="ac_model"
