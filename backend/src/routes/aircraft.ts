@@ -153,11 +153,9 @@ router.post(
     const aircraft = res.aircraft;
     const contractCount = aircraft.contracts.length;
     if (contractCount >= Limits.MaxContractsPerAircraft) {
-      return res
-        .status(400)
-        .json({
-          message: `Maximum ${Limits.MaxContractsPerAircraft} contracts allowed per aircraft`
-        });
+      return res.status(400).json({
+        message: `Maximum ${Limits.MaxContractsPerAircraft} contracts allowed per aircraft`
+      });
     }
 
     const newContract = {
@@ -166,7 +164,8 @@ router.post(
       destination: req.body.destination,
       profits: [],
       progress: 0,
-      finished: false
+      finished: false,
+      lastHandled: new Date()
     };
 
     aircraft.contracts.unshift(newContract);
@@ -256,6 +255,7 @@ router.post(
       (contract.contractType === ContractType.Player &&
         contract.profits.length >= 10) ||
       contract.finished;
+    contract.lastHandled = new Date();
 
     // Update status if all contracts are finished
     if (

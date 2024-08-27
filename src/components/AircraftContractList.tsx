@@ -83,6 +83,18 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
                     {contract.contractType === ContractType.Player && (
                       <ListGroup.Item>Player: {contract.player}</ListGroup.Item>
                     )}
+                    <ListGroup.Item>
+                      Last Handled:{" "}
+                      {isNaN(new Date(contract.lastHandled).getTime())
+                        ? "N/A"
+                        : `${new Date(
+                            contract.lastHandled
+                          ).toLocaleDateString()} (${Math.floor(
+                            (Date.now() -
+                              new Date(contract.lastHandled).getTime()) /
+                              (1000 * 60 * 60 * 24)
+                          )} days ago)`}
+                    </ListGroup.Item>
                     <ListGroup.Item
                       style={{ height: "66px", overflow: "auto" }}
                     >

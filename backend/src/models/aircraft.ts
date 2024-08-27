@@ -34,7 +34,8 @@ const aircraftSchema: Schema = new Schema({
       destination: { type: String, required: true },
       profits: { type: [Number], required: true },
       progress: { type: Number, required: true },
-      finished: { type: Boolean, required: true }
+      finished: { type: Boolean, required: true },
+      lastHandled: { type: Date, required: true }
     }
   ],
   aircraftGroup: { type: mongoose.Types.ObjectId, ref: "AircraftGroup" }

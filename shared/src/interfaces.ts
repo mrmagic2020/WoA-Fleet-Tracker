@@ -21,6 +21,7 @@ export interface IAircraftContract extends Document {
   profits: number[];
   progress: number;
   finished: boolean;
+  lastHandled: Date;
   _id: string;
 }
 
