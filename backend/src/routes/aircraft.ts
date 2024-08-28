@@ -138,6 +138,11 @@ async function getAircraft(req: Request, res: Response, next: NextFunction) {
     if (aircraft == null) {
       return res.status(404).json({ message: "Cannot find aircraft" });
     }
+    aircraft.contracts.forEach((contract: IAircraftContract) => {
+      if (!contract.lastHandled) {
+        contract.lastHandled = new Date();
+      }
+    });
   } catch (err: any) {
     return res.status(500).json({ message: err.message });
   }
@@ -243,11 +248,6 @@ router.post(
   async (req: Request, res: Response) => {
     const aircraft = res.aircraft;
     aircraft.totalProfits += req.body.profit;
-
-    aircraft.contracts.forEach((contract: IAircraftContract) => {
-      contract.lastHandled = new Date(); // Update lastHandled for all contracts
-    });
-
     const contract: IAircraftContract = aircraft.contracts.id(
       req.params.contractId
     );
