@@ -4,6 +4,7 @@ import Aircraft from "../models/aircraft";
 import AircraftGroup from "../models/aircraftGroup";
 import { AircraftStatus, ContractType } from "@mrmagic2020/shared/dist/enums";
 import { Limits } from "@mrmagic2020/shared/dist/constants";
+import { IAircraftContract } from "@mrmagic2020/shared/dist/interfaces";
 
 const router = express.Router();
 router.use(auth);
@@ -243,7 +244,13 @@ router.post(
     const aircraft = res.aircraft;
     aircraft.totalProfits += req.body.profit;
 
-    const contract = aircraft.contracts.id(req.params.contractId);
+    aircraft.contracts.forEach((contract: IAircraftContract) => {
+      contract.lastHandled = new Date(); // Update lastHandled for all contracts
+    });
+
+    const contract: IAircraftContract = aircraft.contracts.id(
+      req.params.contractId
+    );
 
     if (!contract) {
       return res.status(404).json({ message: "Cannot find contract" });
@@ -260,7 +267,7 @@ router.post(
     // Update status if all contracts are finished
     if (
       contract.finished &&
-      !aircraft.contracts.some((c: any) => !c.finished)
+      !aircraft.contracts.some((c: IAircraftContract) => !c.finished)
     ) {
       aircraft.status = AircraftStatus.Idle;
     }
