@@ -4,7 +4,8 @@ import {
   AircraftSize,
   AircraftStatus,
   AircraftType,
-  AirportCode
+  AirportCode,
+  ContractType
 } from "@mrmagic2020/shared/dist/enums";
 import {
   deleteAircraft,
@@ -385,7 +386,8 @@ const AircraftList: React.FC<AircraftListProps> = ({
               </Form.Select>
             )}
             {(filterBy === FilterBy.Destination ||
-              filterBy === FilterBy.Registration) && (
+              filterBy === FilterBy.Registration ||
+              filterBy === FilterBy.ContractPlayer) && (
               <Form.Control
                 size="sm"
                 type="text"
@@ -406,6 +408,22 @@ const AircraftList: React.FC<AircraftListProps> = ({
                 {Object.values(AircraftStatus).map((status) => (
                   <option key={status} value={status}>
                     {status}
+                  </option>
+                ))}
+              </Form.Select>
+            )}
+            {filterBy === FilterBy.ContractType && (
+              <Form.Select
+                size="sm"
+                value={filterValue}
+                onChange={handleFilterValueChange}
+              >
+                <option value="" disabled>
+                  Select Contract Type
+                </option>
+                {Object.values(ContractType).map((type) => (
+                  <option key={type} value={type}>
+                    {type}
                   </option>
                 ))}
               </Form.Select>

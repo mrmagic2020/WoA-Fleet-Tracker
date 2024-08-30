@@ -29,7 +29,9 @@ export enum FilterBy {
   Registration = "registration",
   Airport = "airport",
   Destination = "destination",
-  Status = "status"
+  Status = "status",
+  ContractType = "active contract type",
+  ContractPlayer = "active contract player"
 }
 
 const sortAndFilterAircraft = (
@@ -75,6 +77,27 @@ const sortAndFilterAircraft = (
     case FilterBy.Status:
       aircrafts = aircrafts.filter((aircraft: IAircraft) =>
         aircraft.status.toLowerCase().includes(filterValue.toLowerCase())
+      );
+      break;
+    case FilterBy.ContractType:
+      aircrafts = aircrafts.filter((aircraft: IAircraft) =>
+        aircraft.contracts.some((contract) =>
+          contract.contractType
+            .toLowerCase()
+            .includes(filterValue.toLowerCase())
+        )
+      );
+      break;
+    case FilterBy.ContractPlayer:
+      aircrafts = aircrafts.filter((aircraft: IAircraft) =>
+        aircraft.contracts.some((contract) => {
+          if (contract.player) {
+            return contract.player
+              .toLowerCase()
+              .includes(filterValue.toLowerCase());
+          }
+          return false;
+        })
       );
       break;
     default:
