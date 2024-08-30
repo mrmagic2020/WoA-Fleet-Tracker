@@ -155,8 +155,8 @@ const sortAndFilterAircraft = (
       break;
     case SortBy.CurrentMeanProfit:
       aircrafts.sort((a: IAircraft, b: IAircraft) => {
-        if (!a.contracts[0]) return 1;
-        if (!b.contracts[0]) return -1;
+        if (!a.contracts[0] || !a.contracts[0].profits.length) return 1;
+        if (!b.contracts[0] || !b.contracts[0].profits.length) return -1;
         const aMeanProfit =
           a.contracts[0]?.profits.reduce((acc, profit) => acc + profit, 0) /
           a.contracts[0]?.profits.length;
