@@ -143,6 +143,8 @@ async function getAircraft(req: Request, res: Response, next: NextFunction) {
         contract.lastHandled = new Date();
       }
     });
+    aircraft.markModified("contracts");
+    await aircraft.save();
   } catch (err: any) {
     return res.status(500).json({ message: err.message });
   }
