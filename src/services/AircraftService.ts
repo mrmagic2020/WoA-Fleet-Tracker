@@ -1,8 +1,5 @@
-import {
-  getSharedAircraft,
-  getSharedAircraftGroup
-} from "./AircraftGroupService";
 import api from "./api";
+import { getSharedAircraftGroup } from "./AircraftGroupService";
 import { IAircraft } from "@mrmagic2020/shared/dist/interfaces";
 
 export enum SortBy {

@@ -11,6 +11,7 @@ import aircraftRoutes from "./routes/aircraft";
 import invitationRoutes from "./routes/invitation";
 import aircraftGroupRoutes from "./routes/aircraftGroup";
 import sharedGroupsRoutes from "./routes/sharedGroups";
+import fleetImageRoutes from "./routes/fleetImage";
 import { auth } from "./middleware/auth";
 
 dotenv.config();
@@ -37,12 +38,13 @@ app.use("/api/aircraft", auth, aircraftRoutes);
 app.use("/api/admin", auth, adminRoutes);
 app.use("/api/invitation", auth, invitationRoutes);
 app.use("/api/aircraftGroup", auth, aircraftGroupRoutes);
+app.use("/api/fleetImage", fleetImageRoutes);
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "../client")));
 
 // The "catchall" handler: for any request that doesn't match one above, send back index.html
-app.get("*", (req, res) => {
+app.get("*", (_req, res) => {
   console.log("catchall");
   res.sendFile(path.join(__dirname, "/../client/index.html"), (err) => {
     if (err) {
@@ -52,7 +54,7 @@ app.get("*", (req, res) => {
 });
 
 // Basic route for testing
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.send("Hello, world!");
 });
 

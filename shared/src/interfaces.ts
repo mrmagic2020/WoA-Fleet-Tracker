@@ -36,6 +36,7 @@ export interface IAircraft extends Document {
   totalProfits: number;
   contracts: IAircraftContract[];
   aircraftGroup?: Types.ObjectId;
+  imageURL?: string;
   _id: string;
 }
 

@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
+import fs from "fs";
 import { auth } from "../middleware/auth";
 import Aircraft from "../models/aircraft";
 import AircraftGroup from "../models/aircraftGroup";
@@ -120,6 +121,13 @@ router.delete("/:id", getAircraft, async (req: Request, res: Response) => {
         },
         { new: true }
       );
+    }
+    if (res.aircraft.imageURL) {
+      fs.unlink(res.aircraft.imageURL, (err: any) => {
+        if (err) {
+          console.error("Error deleting image:", err);
+        }
+      });
     }
     res.json({ message: "Deleted Aircraft" });
   } catch (err: any) {

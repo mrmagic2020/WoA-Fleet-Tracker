@@ -38,7 +38,8 @@ const aircraftSchema: Schema = new Schema({
       lastHandled: { type: Date, required: true }
     }
   ],
-  aircraftGroup: { type: mongoose.Types.ObjectId, ref: "AircraftGroup" }
+  aircraftGroup: { type: mongoose.Types.ObjectId, ref: "AircraftGroup" },
+  imageURL: { type: String, required: false }
 });
 
 export default mongoose.model<IAircraft>("Aircraft", aircraftSchema);

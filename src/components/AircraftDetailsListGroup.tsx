@@ -1,24 +1,115 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   IAircraft,
   IAircraftContract
 } from "@mrmagic2020/shared/dist/interfaces";
+import {
+  uploadImage,
+  fetchImage,
+  deleteImage
+} from "../services/FleetImageService";
+import FetchFleetImage from "../assets/FleetImage";
 import Container from "react-bootstrap/Container";
+import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ListGroup from "react-bootstrap/ListGroup";
 import Image from "react-bootstrap/Image";
 import Currency from "./Currency";
+import Spinner from "react-bootstrap/Spinner";
+import "../styles/AircraftDetailsListGroup.css";
 
 interface AircraftDetailsListGroupProps {
   aircraft: IAircraft;
   customItems?: JSX.Element[];
 }
 
+async function FetchFleetDefaultOrCustomImage(
+  ac_model: string,
+  aircraftId: string
+): Promise<[string, boolean]> {
+  try {
+    const image = await fetchImage(aircraftId);
+    if (image) {
+      return [
+        `${
+          process.env.REACT_APP_API_BASE_URL || "http://localhost:6060/api"
+        }/fleetImage/${aircraftId}`,
+        true
+      ];
+    }
+  } catch (error: any) {
+    console.error("Error fetching image:", error);
+  }
+  return [FetchFleetImage(ac_model), false];
+}
+
 const AircraftDetailsListGroup: React.FC<AircraftDetailsListGroupProps> = ({
   aircraft,
   customItems
 }) => {
+  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
+  const [imageURL, setImageURL] = React.useState<string>("");
+  const [hasCustomImage, setHasCustomImage] = React.useState<boolean>(false);
+  const [isUploading, setIsUploading] = React.useState<boolean>(false);
+
+  useEffect(() => {
+    if (selectedFile) return;
+    FetchFleetDefaultOrCustomImage(aircraft.ac_model, aircraft._id).then(
+      ([url, isCustomImage]) => {
+        setImageURL(url);
+        setHasCustomImage(isCustomImage);
+      }
+    );
+  }, [aircraft.ac_model, aircraft._id]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setImageURL(URL.createObjectURL(file));
+    }
+  };
+
+  const handleImageDelete = async () => {
+    try {
+      await deleteImage(aircraft._id);
+      setImageURL(FetchFleetImage(aircraft.ac_model));
+      setHasCustomImage(false);
+    } catch (error) {
+      console.error("Error deleting image:", error);
+    }
+  };
+
+  const handleImageClick = () => {
+    if (hasCustomImage) {
+      handleImageDelete();
+      return;
+    }
+    const fileInput = document.getElementById("fileInput");
+    if (fileInput) {
+      fileInput.click();
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+
+    setIsUploading(true);
+    try {
+      const response = await uploadImage(selectedFile, aircraft._id);
+      setHasCustomImage(true);
+      console.log("Image uploaded successfully:", response);
+    } catch (error: any) {
+      alert(`Error uploading image: ${error.message}`);
+      console.error("Error uploading image:", error);
+      setImageURL(FetchFleetImage(aircraft.ac_model));
+    } finally {
+      setSelectedFile(null);
+      setIsUploading(false);
+    }
+  };
+
   return (
     <Container fluid>
       <Row>
@@ -55,13 +146,49 @@ const AircraftDetailsListGroup: React.FC<AircraftDetailsListGroupProps> = ({
               ))}
           </ListGroup>
         </Col>
-        <Col xs="auto">
-          <Image
-            width={400}
-            src={`/assets/aircraft/${aircraft.ac_model}.jpeg`}
-            alt={aircraft.ac_model}
-            rounded
-          />
+        <Col xs="auto" className="image-container">
+          <Row xs="auto" onClick={handleImageClick}>
+            <Image
+              className="upload-image"
+              width={400}
+              src={imageURL}
+              alt={aircraft.ac_model}
+              rounded
+            />
+            <div className="overlay-text">
+              {hasCustomImage ? "Remove Image" : "Click to upload a new image"}
+            </div>
+          </Row>
+          <Row xs="auto">
+            <input
+              id="fileInput"
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
+            <Button
+              className="upload-button ms-2"
+              size="sm"
+              variant="outline-secondary"
+              disabled={!selectedFile}
+              onClick={handleUpload}
+            >
+              {isUploading ? (
+                <>
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                  />
+                  <span className="ms-2">Uploading...</span>
+                </>
+              ) : (
+                "Upload"
+              )}
+            </Button>
+          </Row>
         </Col>
       </Row>
     </Container>
