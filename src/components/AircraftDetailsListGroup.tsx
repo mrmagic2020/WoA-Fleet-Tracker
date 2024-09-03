@@ -30,14 +30,9 @@ async function FetchFleetDefaultOrCustomImage(
   aircraftId: string
 ): Promise<[string, boolean]> {
   try {
-    const image = await fetchImage(aircraftId);
-    if (image) {
-      return [
-        `${
-          process.env.REACT_APP_API_BASE_URL || "http://localhost:6060/api"
-        }/fleetImage/${aircraftId}`,
-        true
-      ];
+    const imageURL = await fetchImage(aircraftId);
+    if (imageURL) {
+      return [imageURL, true];
     }
   } catch (error: any) {
     console.error("Error fetching image:", error);

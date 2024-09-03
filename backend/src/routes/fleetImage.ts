@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
 import { auth } from "../middleware/auth";
 import path from "path";
 import fs from "fs";
@@ -47,6 +48,10 @@ function checkFileType(
   }
 }
 
+function getPublicId(aircraftId: string) {
+  return `aircraft_images/${aircraftId}`;
+}
+
 // POST aircraft image
 router.post("/:aircraftId", auth, async (req: Request, res: Response) => {
   const aircraftId = req.params.aircraftId;
@@ -67,16 +72,21 @@ router.post("/:aircraftId", auth, async (req: Request, res: Response) => {
           message: "Image uploaded successfully",
           file: req.file
         });
-        const newImageURL = req.file.path;
+        if (oldImageURL) {
+          await cloudinary.uploader.destroy(getPublicId(aircraftId));
+        }
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: "aircraft_images",
+          public_id: `${aircraftId}`
+        });
+        const newImageURL = result.secure_url;
         aircraft.imageURL = newImageURL;
         await aircraft.save();
-        if (oldImageURL) {
-          fs.unlink(oldImageURL, (err) => {
-            if (err) {
-              console.error("Error deleting old image:", err);
-            }
-          });
-        }
+        fs.unlink(req.file.path, (err) => {
+          if (err) {
+            console.error("Error deleting image:", err);
+          }
+        }); // Delete image from uploads folder
       }
     }
   });
@@ -93,12 +103,7 @@ router.get("/:aircraftId", async (req: Request, res: Response) => {
   if (!imageURL) {
     return res.status(404).json({ message: "Image not found" });
   }
-  const filePath = path.join(__dirname, "../../", imageURL);
-  if (fs.existsSync(filePath)) {
-    res.sendFile(filePath);
-  } else {
-    res.status(404).json({ message: "Image not found" });
-  }
+  res.json({ imageURL });
 });
 
 // DELETE aircraft image
@@ -112,14 +117,10 @@ router.delete("/:aircraftId", auth, async (req: Request, res: Response) => {
   if (!imageURL) {
     return res.status(404).json({ message: "Image not found" });
   }
-  fs.unlink(imageURL, async (err) => {
-    if (err) {
-      return res.status(500).json({ message: err.message });
-    }
-    aircraft.imageURL = undefined;
-    await aircraft.save();
-    res.json({ message: "Image deleted successfully" });
-  });
+  await cloudinary.uploader.destroy(getPublicId(aircraftId));
+  aircraft.imageURL = undefined;
+  await aircraft.save();
+  res.json({ message: "Image deleted successfully" });
 });
 
 export default router;

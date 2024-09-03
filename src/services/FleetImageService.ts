@@ -3,7 +3,6 @@ import api from "./api";
 const uploadImage = async (image: File, aircraftId: string) => {
   const formData = new FormData();
   formData.append("image", image);
-  // formData.append("aircraftId", aircraftId);
 
   const response = await api.post(`/fleetImage/${aircraftId}`, formData, {
     headers: {
@@ -16,7 +15,7 @@ const uploadImage = async (image: File, aircraftId: string) => {
 
 const fetchImage = async (aircraftId: string) => {
   const response = await api.get(`/fleetImage/${aircraftId}`);
-  return response.data;
+  return response.data.imageURL;
 };
 
 const deleteImage = async (aircraftId: string) => {
