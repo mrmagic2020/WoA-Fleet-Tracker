@@ -67,7 +67,7 @@ const SharedAircraftDetails: React.FC = () => {
         >{`${aircraft.type} ${aircraft.registration}`}</Breadcrumb.Item>
       </Breadcrumb>
       <h1>Aircraft Details</h1>
-      <AircraftDetailsListGroup aircraft={aircraft} />
+      <AircraftDetailsListGroup aircraft={aircraft} readonly />
       <AircraftContractList contracts={aircraft.contracts} readonly />
     </Container>
   );

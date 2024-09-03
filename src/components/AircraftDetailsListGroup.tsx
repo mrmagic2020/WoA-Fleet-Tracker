@@ -22,6 +22,7 @@ import "../styles/AircraftDetailsListGroup.css";
 interface AircraftDetailsListGroupProps {
   aircraft: IAircraft;
   customItems?: JSX.Element[];
+  readonly?: boolean;
 }
 
 async function FetchFleetDefaultOrCustomImage(
@@ -46,7 +47,8 @@ async function FetchFleetDefaultOrCustomImage(
 
 const AircraftDetailsListGroup: React.FC<AircraftDetailsListGroupProps> = ({
   aircraft,
-  customItems
+  customItems,
+  readonly = false
 }) => {
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [imageURL, setImageURL] = React.useState<string>("");
@@ -155,40 +157,48 @@ const AircraftDetailsListGroup: React.FC<AircraftDetailsListGroupProps> = ({
               alt={aircraft.ac_model}
               rounded
             />
-            <div className="overlay-text">
-              {hasCustomImage ? "Remove Image" : "Click to upload a new image"}
-            </div>
+            {!readonly && (
+              <div className="overlay-text">
+                {hasCustomImage
+                  ? "Remove Image"
+                  : "Click to upload a new image"}
+              </div>
+            )}
           </Row>
-          <Row xs="auto">
-            <input
-              id="fileInput"
-              type="file"
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={handleFileChange}
-            />
-            <Button
-              className="upload-button ms-2"
-              size="sm"
-              variant="outline-secondary"
-              disabled={!selectedFile}
-              onClick={handleUpload}
-            >
-              {isUploading ? (
-                <>
-                  <Spinner
-                    as="span"
-                    animation="border"
-                    size="sm"
-                    role="status"
-                  />
-                  <span className="ms-2">Uploading...</span>
-                </>
-              ) : (
-                "Upload"
+          {!readonly && !hasCustomImage && (
+            <Row xs="auto">
+              <input
+                id="fileInput"
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+              {selectedFile && (
+                <Button
+                  className="upload-button ms-2"
+                  size="sm"
+                  variant="outline-secondary"
+                  disabled={!selectedFile}
+                  onClick={handleUpload}
+                >
+                  {isUploading ? (
+                    <>
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                      />
+                      <span className="ms-2">Uploading...</span>
+                    </>
+                  ) : (
+                    "Upload"
+                  )}
+                </Button>
               )}
-            </Button>
-          </Row>
+            </Row>
+          )}
         </Col>
       </Row>
     </Container>
