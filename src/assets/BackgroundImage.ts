@@ -16,7 +16,7 @@ for (let i = 0; i < backgroundImageCount; i++) {
 backgroundImages[0].author = "World of Airports";
 for (let i = 1; i < 4; i++) {
   backgroundImages[i].author = "mrmagic2023";
-  backgroundImages[i].organisation = "Magic Airways";
+  backgroundImages[i].organisation = "MagicAir";
 }
 
 export function getRandomBackgroundImage(): IBackgroundImage {
