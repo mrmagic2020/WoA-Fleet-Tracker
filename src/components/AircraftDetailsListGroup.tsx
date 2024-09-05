@@ -144,7 +144,7 @@ const AircraftDetailsListGroup: React.FC<AircraftDetailsListGroupProps> = ({
           </ListGroup>
         </Col>
         <Col xs="auto" className="image-container">
-          <Row xs="auto" onClick={handleImageClick}>
+          <Row xs="auto" onClick={readonly ? undefined : handleImageClick}>
             <Image
               className="upload-image"
               width={400}
