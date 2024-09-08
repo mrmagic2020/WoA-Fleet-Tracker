@@ -10,7 +10,8 @@ export enum SortBy {
   Type = "type",
   Size = "size",
   TotalProfits = "total profits",
-  CurrentMeanProfit = "current mean profit"
+  CurrentMeanProfit = "current mean profit",
+  LastHandledDate = "last handled date"
 }
 
 export enum SortMode {
@@ -164,6 +165,22 @@ const sortAndFilterAircraft = (
           return aMeanProfit - bMeanProfit;
         }
         return bMeanProfit - aMeanProfit;
+      });
+      break;
+    case SortBy.LastHandledDate:
+      aircrafts.sort((a: IAircraft, b: IAircraft) => {
+        if (!a.contracts[0] || !a.contracts[0].lastHandled) return 1;
+        if (!b.contracts[0] || !b.contracts[0].lastHandled) return -1;
+        if (sortMode === SortMode.Ascending) {
+          return (
+            new Date(a.contracts[0].lastHandled).getTime() -
+            new Date(b.contracts[0].lastHandled).getTime()
+          );
+        }
+        return (
+          new Date(b.contracts[0].lastHandled).getTime() -
+          new Date(a.contracts[0].lastHandled).getTime()
+        );
       });
       break;
     default:
