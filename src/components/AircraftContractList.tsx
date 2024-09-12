@@ -41,6 +41,8 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
   const [isProfitLogging, setIsProfitLogging] = useState<{
     [key: string]: boolean;
   }>({});
+  const [finishingContract, setFinishingContract] =
+    useState<IAircraftContract | null>(null);
   const [deletingContract, setDeletingContract] =
     useState<IAircraftContract | null>(null);
   const [showFinishModal, setShowFinishModal] = useState(false);
@@ -209,6 +211,7 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
                                   variant="outline-success"
                                   size="sm"
                                   onClick={() => {
+                                    setFinishingContract(contract);
                                     setShowFinishModal(true);
                                   }}
                                 >
@@ -254,8 +257,8 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
                             <Button
                               variant="success"
                               onClick={() => {
-                                if (handleFinishContract) {
-                                  handleFinishContract(contract._id);
+                                if (handleFinishContract && finishingContract) {
+                                  handleFinishContract(finishingContract._id);
                                 }
                                 setShowFinishModal(false);
                               }}
