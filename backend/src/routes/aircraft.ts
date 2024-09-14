@@ -5,7 +5,10 @@ import Aircraft from "../models/aircraft";
 import AircraftGroup from "../models/aircraftGroup";
 import { AircraftStatus, ContractType } from "@mrmagic2020/shared/dist/enums";
 import { Limits } from "@mrmagic2020/shared/dist/constants";
-import { IAircraftContract } from "@mrmagic2020/shared/dist/interfaces";
+import {
+  IAircraft,
+  IAircraftContract
+} from "@mrmagic2020/shared/dist/interfaces";
 
 const router = express.Router();
 router.use(auth);
@@ -79,14 +82,17 @@ router.post("/", async (req: Request, res: Response) => {
 // PUT update an aircraft
 router.put("/:id", getAircraft, async (req: Request, res: Response) => {
   try {
-    const newAircraft = await Aircraft.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
+    const newAircraft: IAircraft | null = await Aircraft.findById(
+      req.params.id
     );
     if (!newAircraft) {
       return res.status(404).json({ message: "Aircraft not found" });
     }
+    if (newAircraft.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+    newAircraft.set(req.body);
+    await newAircraft.save();
     res.json(newAircraft);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -95,7 +101,10 @@ router.put("/:id", getAircraft, async (req: Request, res: Response) => {
 
 // PUT sell an aircraft
 router.put("/:id/sell", getAircraft, async (req: Request, res: Response) => {
-  const aircraft = res.aircraft;
+  const aircraft: IAircraft = res.aircraft;
+  if (aircraft.user.toString() !== req.user.id) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
   aircraft.status = AircraftStatus.Sold;
   aircraft.contracts.forEach((contract: any) => {
     contract.finished = true;
@@ -112,6 +121,9 @@ router.put("/:id/sell", getAircraft, async (req: Request, res: Response) => {
 // DELETE an aircraft
 router.delete("/:id", getAircraft, async (req: Request, res: Response) => {
   try {
+    if (res.aircraft.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
     await res.aircraft.deleteOne();
     if (res.aircraft.aircraftGroup) {
       await AircraftGroup.findByIdAndUpdate(
@@ -141,7 +153,7 @@ async function getAircraft(req: Request, res: Response, next: NextFunction) {
   try {
     aircraft = await Aircraft.findOne({
       _id: req.params.id,
-      user: (req.user as any).id
+      user: req.user.id
     });
     if (aircraft == null) {
       return res.status(404).json({ message: "Cannot find aircraft" });

@@ -26,6 +26,7 @@ export interface IAircraftContract extends Document {
 }
 
 export interface IAircraft extends Document {
+  user: Types.ObjectId;
   ac_model: string;
   size: AircraftSize;
   type: string;

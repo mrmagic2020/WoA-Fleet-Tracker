@@ -37,7 +37,9 @@ router.post("/", auth, async (req, res) => {
 // GET all aircraft groups (protected route)
 router.get("/", auth, async (req, res) => {
   try {
-    const groups = await AircraftGroup.find({});
+    const groups = await AircraftGroup.find({
+      owner: req.user.id
+    });
     res.status(200).json(groups);
   } catch (err: any) {
     res.status(400).json({ message: err.message });
@@ -60,14 +62,15 @@ router.get("/:id", auth, async (req, res) => {
 // PUT update an aircraft group (protected route)
 router.put("/:id", auth, async (req, res) => {
   try {
-    const group = await AircraftGroup.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
+    const group = await AircraftGroup.findById(req.params.id);
     if (!group) {
       return res.status(404).json({ message: "Group not found" });
     }
+    if (group.owner.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+    group.set(req.body);
+    await group.save();
     res.status(200).json(group);
   } catch (err: any) {
     res.status(400).json({ message: err.message });
@@ -77,10 +80,14 @@ router.put("/:id", auth, async (req, res) => {
 // DELETE an aircraft group (protected route)
 router.delete("/:id", auth, async (req, res) => {
   try {
-    const group = await AircraftGroup.findByIdAndDelete(req.params.id);
+    const group = await AircraftGroup.findById(req.params.id);
     if (!group) {
       return res.status(404).json({ message: "Group not found" });
     }
+    if (group.owner.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+    await group.deleteOne();
     // Remove group from all aircrafts
     await Aircraft.updateMany(
       { aircraftGroup: req.params.id },
