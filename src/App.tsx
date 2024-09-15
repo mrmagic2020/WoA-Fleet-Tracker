@@ -5,6 +5,7 @@ import { initReCAPTCHASiteKey } from "./services/ReCAPTCHAService";
 import PrivateRoute from "./components/PrivateRoute";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import AboutUs from "./components/AboutUs";
 const SharedAircraftGroup = lazy(
   () => import("./components/SharedAircraftGroup")
 );
@@ -33,6 +34,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/about" element={<AboutUs />} />
             <Route
               path="/sharedGroups/:user/:groupId"
               element={<SharedAircraftGroup />}

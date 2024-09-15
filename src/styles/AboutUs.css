@@ -1,0 +1,77 @@
+.info-container {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom right,
+    rgba(0, 0, 0, 0.3),
+    rgba(0, 0, 0, 0.7)
+  );
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 1;
+}
+
+.info-card {
+  background: rgba(255, 255, 255, 0.7);
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  text-align: center;
+  z-index: 2;
+  margin-top: 5vh;
+}
+
+.info-card h1 {
+  font-family: "Arial", sans-serif;
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.info-card p {
+  font-family: "Arial", sans-serif;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+  color: #555;
+}
+
+.info-card a {
+  color: #007bff;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.info-card a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.image-credit {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.5);
+  color: #fff;
+  font-size: 1rem;
+  font-family: "Arial", sans-serif;
+}

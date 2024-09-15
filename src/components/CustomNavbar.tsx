@@ -59,12 +59,7 @@ const CustomNavbar: React.FC = () => {
             <Nav.Link href="https://forum.worldofairports.com/" target="_blank">
               WoA
             </Nav.Link>
-            <Nav.Link
-              href="https://github.com/mrmagic2020/WoA-Fleet-Tracker"
-              target="_blank"
-            >
-              GitHub
-            </Nav.Link>
+            <Nav.Link href="/about">About</Nav.Link>
             {isAuthenticated ? (
               <NavDropdown
                 title={username}
