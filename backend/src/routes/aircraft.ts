@@ -253,11 +253,11 @@ router.delete(
       0
     );
 
+    await contract.deleteOne();
+
     if (!aircraft.contracts.some((c: any) => !c.finished)) {
       aircraft.status = AircraftStatus.Idle;
     }
-
-    await contract.deleteOne();
 
     try {
       const updatedAircraft = await aircraft.save();
