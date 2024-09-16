@@ -78,10 +78,24 @@ const FleetStatistics: React.FC = () => {
     { Idle: 0, "In Service": 0, Sold: 0 }
   );
 
-  const aircraftCountByAirport = filteredAircrafts.reduce((acc, aircraft) => {
-    acc[aircraft.airport] = (acc[aircraft.airport] || 0) + 1;
-    return acc;
-  }, {} as Record<AirportCode, number>);
+  const _tmpAircraftCountByAirport = filteredAircrafts.reduce(
+    (acc, aircraft) => {
+      acc[aircraft.airport] = (acc[aircraft.airport] || 0) + 1;
+      return acc;
+    },
+    {} as Record<AirportCode, number>
+  );
+  const aircraftCountByAirport = Object.keys(_tmpAircraftCountByAirport)
+    .sort((a, b) => {
+      return (
+        Object.values(AirportCode).indexOf(a as AirportCode) -
+        Object.values(AirportCode).indexOf(b as AirportCode)
+      );
+    })
+    .reduce((acc, key) => {
+      acc[key as AirportCode] = _tmpAircraftCountByAirport[key as AirportCode];
+      return acc;
+    }, {} as Record<AirportCode, number>);
 
   const totalProfits = filteredAircrafts.reduce(
     (acc, aircraft) => acc + aircraft.totalProfits,
@@ -120,13 +134,7 @@ const FleetStatistics: React.FC = () => {
 
   // Bar chart data for Aircraft per Airport
   const barData = {
-    labels: Object.keys(aircraftCountByAirport).sort((a, b) => {
-      // Sort according to enum order
-      return (
-        Object.values(AirportCode).indexOf(a as AirportCode) -
-        Object.values(AirportCode).indexOf(b as AirportCode)
-      );
-    }),
+    labels: Object.keys(aircraftCountByAirport),
     datasets: [
       {
         label: "Aircraft Count",
