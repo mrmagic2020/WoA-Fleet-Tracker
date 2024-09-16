@@ -55,7 +55,7 @@ function formatContractProgress(progress: number, type: ContractType) {
           <ProgressBar
             now={subProgress * 10}
             max={subProgressLength * 10}
-            label={`${(subProgress / subProgressLength) * 100}%`}
+            label={`${((subProgress / subProgressLength) * 100).toFixed(2)}%`}
             striped
             variant="info"
           />
