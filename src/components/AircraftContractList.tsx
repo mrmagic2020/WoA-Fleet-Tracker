@@ -14,6 +14,56 @@ import ProgressBar from "react-bootstrap/ProgressBar";
 import Spinner from "react-bootstrap/Spinner";
 import Currency from "./Currency";
 
+function formatContractProgress(progress: number, type: ContractType) {
+  switch (type) {
+    case ContractType.Player:
+      return (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center"
+          }}
+        >
+          <span
+            style={{
+              marginRight: "1rem"
+            }}
+          >
+            Progress:
+          </span>
+          <ProgressBar
+            now={progress * 10}
+            label={`${progress * 10}%`}
+            striped
+            variant="info"
+            style={{ flexGrow: 1 }}
+          />
+        </div>
+      );
+    default:
+      let subProgress = progress,
+        subProgressLength = 1;
+      while (subProgress >= subProgressLength) {
+        subProgress -= subProgressLength;
+        if (subProgressLength < 10) subProgressLength++;
+      }
+      return (
+        <>
+          <span>
+            Progress: {subProgress}/{subProgressLength} ({progress})
+          </span>
+          <ProgressBar
+            now={subProgress * 10}
+            max={subProgressLength * 10}
+            label={`${(subProgress / subProgressLength) * 100}%`}
+            striped
+            variant="info"
+          />
+        </>
+      );
+  }
+}
+
 interface AircraftContractListProps {
   contracts: IAircraftContract[];
   handleLogProfit?: (contractId: string, newProfit: number) => Promise<void>;
@@ -62,7 +112,7 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
           {contracts.map((contract: IAircraftContract, index: number) => (
             <Card
               style={{
-                width: "18rem",
+                width: "22rem",
                 margin: "0.5rem"
               }}
               key={index}
@@ -125,22 +175,15 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
                       />
                     </ListGroup.Item>
                     <ListGroup.Item>
-                      Progress:
-                      {contract.contractType === ContractType.Player ? (
-                        <ProgressBar
-                          now={contract.progress * 10}
-                          label={`${contract.progress * 10}%`}
-                          striped
-                          variant="info"
-                        />
-                      ) : (
-                        ` ${contract.progress}`
+                      {formatContractProgress(
+                        contract.progress,
+                        contract.contractType
                       )}
                     </ListGroup.Item>
                     {!readonly && (
                       <>
-                        <ListGroup.Item>
-                          {!contract.finished && (
+                        {!contract.finished && (
+                          <ListGroup.Item>
                             <Form
                               onSubmit={async (e) => {
                                 e.preventDefault();
@@ -201,8 +244,8 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
                                 </Col>
                               </Row>
                             </Form>
-                          )}
-                        </ListGroup.Item>
+                          </ListGroup.Item>
+                        )}
                         <ListGroup.Item>
                           <Row>
                             {!contract.finished && (

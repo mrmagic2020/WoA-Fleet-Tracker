@@ -37,6 +37,7 @@ const AircraftDetails: React.FC = () => {
   const [aircraftGroupList, setAircraftGroupList] = useState<IAircraftGroup[]>(
     []
   );
+  const [isAircraftGroupLoading, setIsAircraftGroupLoading] = useState(false);
   const [aircraftGroup, setAircraftGroup] = useState<IAircraftGroup | null>(
     null
   );
@@ -66,8 +67,10 @@ const AircraftDetails: React.FC = () => {
   useEffect(() => {
     const fetchAircraftGroup = async () => {
       if (!aircraft || !aircraft.aircraftGroup) return;
+      setIsAircraftGroupLoading(true);
       const data = await getAircraftGroupById(aircraft.aircraftGroup as any);
       setAircraftGroup(data);
+      setIsAircraftGroupLoading(false);
     };
 
     fetchAircraftGroup();
@@ -200,24 +203,39 @@ const AircraftDetails: React.FC = () => {
       <AircraftDetailsListGroup
         aircraft={aircraft}
         customItems={[
-          <>
-            Group:
-            <Form>
-              <Form.Select
-                name="aircraftGroup"
-                value={aircraftGroup?._id || ""}
-                style={{ width: "auto" }}
-                onChange={handleGroupChange}
-              >
-                <option value="">None</option>
-                {aircraftGroupList.map((group) => (
-                  <option key={group._id} value={group._id}>
-                    {group.name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form>
-          </>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center"
+            }}
+          >
+            <span
+              style={{
+                marginRight: "1rem"
+              }}
+            >
+              Group:
+            </span>
+            {isAircraftGroupLoading ? (
+              "Loading..."
+            ) : (
+              <Form>
+                <Form.Select
+                  name="aircraftGroup"
+                  value={aircraftGroup?._id || ""}
+                  style={{ width: "auto" }}
+                  onChange={handleGroupChange}
+                >
+                  <option value="">None</option>
+                  {aircraftGroupList.map((group) => (
+                    <option key={group._id} value={group._id}>
+                      {group.name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form>
+            )}
+          </div>
         ]}
       />
 
