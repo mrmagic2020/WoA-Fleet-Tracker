@@ -248,11 +248,16 @@ router.delete(
       return res.status(404).json({ message: "Cannot find contract" });
     }
 
-    await contract.deleteOne();
+    aircraft.totalProfits -= contract.profits.reduce(
+      (acc: number, profit: number) => acc + profit,
+      0
+    );
 
     if (!aircraft.contracts.some((c: any) => !c.finished)) {
       aircraft.status = AircraftStatus.Idle;
     }
+
+    await contract.deleteOne();
 
     try {
       const updatedAircraft = await aircraft.save();
