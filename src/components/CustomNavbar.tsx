@@ -51,6 +51,9 @@ const CustomNavbar: React.FC = () => {
           <Nav className="me-auto">
             {isAuthenticated && <Nav.Link href="/">Fleet</Nav.Link>}
             {isAuthenticated && (
+              <Nav.Link href="/statistics">Statistics</Nav.Link>
+            )}
+            {isAuthenticated && (
               <Nav.Link href="/aircraftGroups">Groups</Nav.Link>
             )}
             {isAuthenticated && role === UserRole.Admin && (

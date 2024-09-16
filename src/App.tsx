@@ -13,6 +13,7 @@ const SharedAircraftDetails = lazy(
   () => import("./components/SharedAircraftDetails")
 );
 const FleetDashboard = lazy(() => import("./components/FleetDashboard"));
+const FleetStatistics = lazy(() => import("./components/FleetStatistics"));
 const AircraftDetails = lazy(() => import("./components/AircraftDetails"));
 const AircraftGroupList = lazy(() => import("./components/AircraftGroupList"));
 const AircraftGroupForm = lazy(() => import("./components/AircraftGroupForm"));
@@ -45,6 +46,7 @@ const App: React.FC = () => {
             />
             <Route path="/" element={<PrivateRoute />}>
               <Route path="/" element={<FleetDashboard />} />
+              <Route path="/statistics" element={<FleetStatistics />} />
               <Route path="/aircraft/:id" element={<AircraftDetails />} />
               <Route path="/aircraftGroups" element={<AircraftGroupList />} />
               <Route
