@@ -143,7 +143,7 @@ const FleetStatistics: React.FC = () => {
       {/* Filters */}
       <Form className="mb-4">
         <Row>
-          <Col md={4}>
+          <Col xs={12} md={4}>
             <Form.Group controlId="airportFilter">
               <Form.Label>Filter by Airport</Form.Label>
               <Form.Control
@@ -163,7 +163,7 @@ const FleetStatistics: React.FC = () => {
             </Form.Group>
           </Col>
 
-          <Col md={4}>
+          <Col xs={12} md={4}>
             <Form.Group controlId="sizeFilter">
               <Form.Label>Filter by Size</Form.Label>
               <Form.Control
@@ -182,7 +182,7 @@ const FleetStatistics: React.FC = () => {
             </Form.Group>
           </Col>
 
-          <Col md={4}>
+          <Col xs={12} md={4}>
             <Form.Group controlId="typeFilter">
               <Form.Label>Filter by Type</Form.Label>
               <Form.Control
@@ -203,18 +203,25 @@ const FleetStatistics: React.FC = () => {
 
       {/* Charts */}
       <Row className="mb-4">
-        <Col>
+        <Col xs={12} md={6} lg={4}>
           <Card
             className="p-3"
             style={{
-              width: "25vw"
+              height: "100%"
             }}
           >
             <h5 className="text-center">Aircraft Sizes</h5>
-            <div className="d-flex justify-content-center">
+            <div
+              className="d-flex justify-content-center"
+              style={{
+                height: "300px"
+              }}
+            >
               <Pie
                 data={sizePieData}
                 options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
                   plugins: {
                     datalabels: {
                       color: "#fff",
@@ -237,18 +244,26 @@ const FleetStatistics: React.FC = () => {
           </Card>
         </Col>
 
-        <Col>
+        <Col xs={12} md={6} lg={4}>
           <Card
             className="p-3"
             style={{
-              width: "25vw"
+              height: "100%"
             }}
           >
             <h5 className="text-center">Aircraft Status</h5>
-            <div className="d-flex justify-content-center">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                height: "300px"
+              }}
+            >
               <Pie
                 data={statusPieData}
                 options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
                   plugins: {
                     datalabels: {
                       color: "#fff",
@@ -271,46 +286,62 @@ const FleetStatistics: React.FC = () => {
           </Card>
         </Col>
 
-        <Col>
+        <Col xs={12} lg={4}>
           <Row className="mb-3">
-            <Card className="p-3">
-              <Row className="text-center">
-                <Col xs={12} sm={6}>
-                  <h5>Aircraft Count</h5>
-                  <h3>{filteredAircrafts.length}</h3>
-                </Col>
-                <Col xs={12} sm={6}>
-                  <h5>Total Profits</h5>
-                  <h3>
-                    <Currency value={totalProfits} decimals={0} />
-                  </h3>
-                </Col>
-              </Row>
-            </Card>
+            <div>
+              <Card className="p-3">
+                <Row className="text-center">
+                  <Col xs={12} sm={6}>
+                    <h5>Aircraft Count</h5>
+                    <h3>{filteredAircrafts.length}</h3>
+                  </Col>
+                  <Col xs={12} sm={6}>
+                    <h5>Total Profits</h5>
+                    <h3>
+                      <Currency value={totalProfits} decimals={0} />
+                    </h3>
+                  </Col>
+                </Row>
+              </Card>
+            </div>
           </Row>
           <Row>
-            <Card className="p-3">
-              <h5 className="text-center">Aircraft per Airport</h5>
-              <Bar
-                data={barData}
-                options={{
-                  plugins: {
-                    datalabels: {
-                      color: "#fff",
-                      formatter: (value: number, context: any) => {
-                        if (value) {
-                          return `${value}`;
-                        }
-                        return "";
-                      },
-                      font: {
-                        weight: "bold"
-                      }
-                    }
-                  }
+            <div>
+              <Card
+                className="p-3"
+                style={{
+                  height: "100%"
                 }}
-              />
-            </Card>
+              >
+                <h5 className="text-center">Aircraft per Airport</h5>
+                <div
+                  className="d-flex justify-content-center"
+                  style={{ height: "200px" }}
+                >
+                  <Bar
+                    data={barData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        datalabels: {
+                          color: "#fff",
+                          formatter: (value: number, context: any) => {
+                            if (value) {
+                              return `${value}`;
+                            }
+                            return "";
+                          },
+                          font: {
+                            weight: "bold"
+                          }
+                        }
+                      }
+                    }}
+                  />
+                </div>
+              </Card>
+            </div>
           </Row>
         </Col>
       </Row>
