@@ -120,7 +120,13 @@ const FleetStatistics: React.FC = () => {
 
   // Bar chart data for Aircraft per Airport
   const barData = {
-    labels: Object.keys(aircraftCountByAirport),
+    labels: Object.keys(aircraftCountByAirport).sort((a, b) => {
+      // Sort according to enum order
+      return (
+        Object.values(AirportCode).indexOf(a as AirportCode) -
+        Object.values(AirportCode).indexOf(b as AirportCode)
+      );
+    }),
     datasets: [
       {
         label: "Aircraft Count",
