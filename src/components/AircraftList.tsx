@@ -224,11 +224,14 @@ const AircraftList: React.FC<AircraftListProps> = ({
     }
     const fetchGroups = async () => {
       try {
+        const loadedGroupIds: string[] = [];
         const groupPromises = currentAircrafts.map(async (aircraft) => {
           if (
             aircraft.aircraftGroup &&
+            !loadedGroupIds.includes(aircraft.aircraftGroup as any) &&
             !groups[aircraft.aircraftGroup as any]
           ) {
+            loadedGroupIds.push(aircraft.aircraftGroup as any);
             const group = await getAircraftGroupById(
               aircraft.aircraftGroup as any
             );
@@ -236,6 +239,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
           }
           return null;
         });
+        console.log(loadedGroupIds);
         const groupResults = await Promise.all(groupPromises);
         const newGroups = groupResults
           .filter((group) => group !== null)
