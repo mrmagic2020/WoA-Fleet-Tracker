@@ -21,6 +21,11 @@ router.get("/:user/:groupId", optionalAuth, async (req, res) => {
 
     const groupOwner = await User.findById(foundGroup.owner);
     const groupOwnerName = groupOwner?.username;
+
+    if (user !== groupOwnerName) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+
     if (foundGroup.visibility === AircraftGroupVisibility.Private) {
       if (!req.user || groupOwnerName !== user) {
         return res.status(403).json({ message: "Access denied" });
