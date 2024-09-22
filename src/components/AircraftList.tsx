@@ -239,7 +239,6 @@ const AircraftList: React.FC<AircraftListProps> = ({
           }
           return null;
         });
-        console.log(loadedGroupIds);
         const groupResults = await Promise.all(groupPromises);
         const newGroups = groupResults
           .filter((group) => group !== null)

@@ -4,6 +4,7 @@ import {
   getAircraftById,
   createContract,
   logProfit,
+  logPastProfits,
   finishContract,
   deleteContract,
   updateAircraft
@@ -171,6 +172,30 @@ const AircraftDetails: React.FC = () => {
     }
   };
 
+  const handleLogPastProfits = async (
+    contractId: string,
+    handles: number,
+    profit: number,
+    overwrite: boolean
+  ) => {
+    if (!aircraft) return;
+    try {
+      const updatedAircraft = await logPastProfits(
+        id,
+        contractId,
+        handles,
+        profit,
+        overwrite
+      );
+      setAircraft(updatedAircraft);
+      if (updatedAircraft) {
+        checkForActiveContract(updatedAircraft.contracts);
+      }
+    } catch (error: any) {
+      alert(`Failed to log past profits: ${error.response.data.message}`);
+    }
+  };
+
   const handleFinishContract = async (contractId: string) => {
     if (!aircraft) return;
     const updatedAircraft = await finishContract(id, contractId);
@@ -243,6 +268,7 @@ const AircraftDetails: React.FC = () => {
       <AircraftContractList
         contracts={aircraft.contracts}
         handleLogProfit={handleLogProfit}
+        handleLogPastProfits={handleLogPastProfits}
         handleFinishContract={handleFinishContract}
         handleDeleteContract={handleDeleteContract}
       />

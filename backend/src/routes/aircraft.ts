@@ -309,4 +309,71 @@ router.post(
   }
 );
 
+// POST log past profits
+router.post(
+  "/:id/contracts/:contractId/profits/past",
+  getAircraft,
+  async (req: Request, res: Response) => {
+    const aircraft = res.aircraft;
+    const contract: IAircraftContract = aircraft.contracts.id(
+      req.params.contractId
+    );
+
+    if (!contract) {
+      return res.status(404).json({ message: "Cannot find contract" });
+    }
+
+    if (req.body.overwrite) {
+      aircraft.totalProfits -= contract.profits.reduce(
+        (acc: number, profit: number) => acc + profit,
+        0
+      );
+      contract.profits = [];
+      contract.progress = 0;
+    }
+    aircraft.totalProfits += req.body.profit;
+
+    // Distribute the profit evenly as integer values among the handles
+    const flooredPastProfits = Math.floor(req.body.profit / req.body.handles);
+
+    if (
+      contract.contractType === ContractType.Player &&
+      contract.progress + req.body.handles > 10
+    ) {
+      return res.status(400).json({
+        message: "Cannot log more than 10 profits for a player contract"
+      });
+    }
+
+    for (let i = 0; i < req.body.handles - 1; i++) {
+      contract.profits.push(flooredPastProfits);
+    }
+    contract.profits.push(
+      req.body.profit - flooredPastProfits * (req.body.handles - 1)
+    ); // Add the remainder
+
+    contract.progress += req.body.handles;
+    contract.finished =
+      (contract.contractType === ContractType.Player &&
+        contract.profits.length >= 10) ||
+      contract.finished;
+    contract.lastHandled = new Date();
+
+    // Update status if all contracts are finished
+    if (
+      contract.finished &&
+      !aircraft.contracts.some((c: IAircraftContract) => !c.finished)
+    ) {
+      aircraft.status = AircraftStatus.Idle;
+    }
+
+    try {
+      const updatedAircraft = await aircraft.save();
+      res.status(201).json(updatedAircraft);
+    } catch (err: any) {
+      res.status(400).json({ message: err.message });
+    }
+  }
+);
+
 export default router;

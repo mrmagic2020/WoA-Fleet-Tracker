@@ -309,6 +309,23 @@ export const logProfit = async (
   return null;
 };
 
+export const logPastProfits = async (
+  aircraftId: string,
+  contractId: string,
+  handles: number,
+  profit: number,
+  overwrite: boolean
+) => {
+  const response = await api.post(
+    `/aircraft/${aircraftId}/contracts/${contractId}/profits/past`,
+    { handles, profit, overwrite }
+  );
+  if (response.status === 201) {
+    return response.data as IAircraft;
+  }
+  return null;
+};
+
 export const finishContract = async (
   aircraftId: string,
   contractId: string
