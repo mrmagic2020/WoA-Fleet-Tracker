@@ -147,11 +147,11 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
   }
   const [newProfit, setNewProfit] = useState(NaN);
   const [showProfitModal, setShowProfitModal] = useState(false);
-  const [isShowProfitModalSubmitting, setIsShowProfitModalSubmitting] =
-    useState(false);
   const [isProfitLogging, setIsProfitLogging] = useState<{
     [key: string]: boolean;
   }>({});
+  const [loggingContract, setLoggingContract] =
+    useState<IAircraftContract | null>(null);
   const [finishingContract, setFinishingContract] =
     useState<IAircraftContract | null>(null);
   const [deletingContract, setDeletingContract] =
@@ -310,7 +310,10 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
                                     style={{
                                       marginLeft: "1rem"
                                     }}
-                                    onClick={() => setShowProfitModal(true)}
+                                    onClick={() => {
+                                      setLoggingContract(contract);
+                                      setShowProfitModal(true);
+                                    }}
                                   >
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
@@ -453,15 +456,13 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
                               onSubmit={async (
                                 values: LogPastProfitsFormValues
                               ) => {
-                                if (handleLogPastProfits) {
-                                  setIsShowProfitModalSubmitting(true);
+                                if (handleLogPastProfits && loggingContract) {
                                   await handleLogPastProfits(
-                                    contract._id,
+                                    loggingContract._id,
                                     values.handles!,
                                     values.profit!,
                                     values.overwrite
                                   );
-                                  setIsShowProfitModalSubmitting(false);
                                   setShowProfitModal(false);
                                 }
                               }}
