@@ -376,7 +376,9 @@ const FleetStatistics: React.FC = () => {
               <td>{aircraft.registration}</td>
               <td>{aircraft.airport}</td>
               <td>{aircraft.status}</td>
-              <td>${aircraft.totalProfits.toLocaleString()}</td>
+              <td>
+                <Currency value={aircraft.totalProfits} decimals={0} />
+              </td>
             </tr>
           ))}
         </tbody>
