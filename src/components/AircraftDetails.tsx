@@ -19,7 +19,11 @@ import {
   AirportCode,
   ContractType
 } from "@mrmagic2020/shared/dist/enums";
-import { IAircraft, IAircraftGroup } from "@mrmagic2020/shared/dist/interfaces";
+import {
+  IAircraft,
+  IAircraftContract,
+  IAircraftGroup
+} from "@mrmagic2020/shared/dist/interfaces";
 import Breadcrumb from "react-bootstrap/Breadcrumb";
 import Container from "react-bootstrap/Container";
 import Alert from "react-bootstrap/Alert";
@@ -138,10 +142,10 @@ const AircraftDetails: React.FC = () => {
     setNewContract({ ...newContract, [name]: value });
   };
 
-  const handleCreateContract = async () => {
+  const handleCreateContract = async (props?: Partial<IAircraftContract>) => {
     if (!aircraft || hasActiveContract) return;
     setIsContractCreateLoading(true);
-    const updatedAircraft = await createContract(id, newContract);
+    const updatedAircraft = await createContract(id, props || newContract);
     newContract.contractType = "";
     newContract.player = "";
     newContract.destination = "";
@@ -202,6 +206,25 @@ const AircraftDetails: React.FC = () => {
     if (!updatedAircraft) return;
     setAircraft(updatedAircraft);
     checkForActiveContract(updatedAircraft.contracts);
+  };
+
+  const handleRenewContract = async (contractId: string) => {
+    if (!aircraft) return;
+    setNewContract({
+      contractType: ContractType.Player,
+      player: aircraft.contracts[0].player || "",
+      destination: aircraft.contracts[0].destination
+    });
+    await handleCreateContract({
+      contractType: ContractType.Player,
+      player: aircraft.contracts[0].player || "",
+      destination: aircraft.contracts[0].destination
+    });
+    setNewContract({
+      contractType: "",
+      player: "",
+      destination: ""
+    });
   };
 
   const handleDeleteContract = async (contractId: string) => {
@@ -270,6 +293,7 @@ const AircraftDetails: React.FC = () => {
         handleLogProfit={handleLogProfit}
         handleLogPastProfits={handleLogPastProfits}
         handleFinishContract={handleFinishContract}
+        handleRenewContract={handleRenewContract}
         handleDeleteContract={handleDeleteContract}
       />
 

@@ -122,6 +122,7 @@ interface AircraftContractListProps {
     overwrite: boolean
   ) => Promise<void>;
   handleFinishContract?: (contractId: string) => void;
+  handleRenewContract?: (contractId: string) => void;
   handleDeleteContract?: (contractId: string) => void;
   readonly?: boolean;
 }
@@ -131,6 +132,7 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
   handleLogProfit,
   handleLogPastProfits,
   handleFinishContract,
+  handleRenewContract,
   handleDeleteContract,
   readonly = false
 }) => {
@@ -139,10 +141,11 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
     (!handleLogProfit ||
       !handleLogPastProfits ||
       !handleFinishContract ||
+      !handleRenewContract ||
       !handleDeleteContract)
   ) {
     throw new Error(
-      "handleProfitChange, handleLogProfit, and handleFinishContract are required when readonly is false"
+      "All handlers must be provided if readonly is not set to true"
     );
   }
   const [newProfit, setNewProfit] = useState(NaN);
@@ -332,7 +335,7 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
                           </ListGroup.Item>
                         )}
 
-                        {/* Finish/Delete Contract Buttons */}
+                        {/* Finish/Renew/Delete Contract Buttons */}
                         <ListGroup.Item>
                           <Row>
                             {!contract.finished && (
@@ -349,6 +352,24 @@ const AircraftContractList: React.FC<AircraftContractListProps> = ({
                                 </Button>
                               </Col>
                             )}
+                            {index === 0 &&
+                              contract.contractType === ContractType.Player &&
+                              contract.finished &&
+                              contract.progress === 10 && (
+                                <Col>
+                                  <Button
+                                    variant="outline-primary"
+                                    size="sm"
+                                    onClick={() => {
+                                      if (handleRenewContract) {
+                                        handleRenewContract(contract._id);
+                                      }
+                                    }}
+                                  >
+                                    Renew Contract
+                                  </Button>
+                                </Col>
+                              )}
                             <Col>
                               <Button
                                 variant="outline-danger"
